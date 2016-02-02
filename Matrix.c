@@ -1,0 +1,31 @@
+//
+// Created by Akuni on 02/02/16.
+//
+
+#include <malloc.h>
+#include "Matrix.h"
+
+/**
+ * Init matrix representation.
+ */
+int init_matrix(int size, int max_temp_value, matrix_representation * m){
+    m->size = size;
+    m->middle_index = size/2;
+    m->matrix = malloc(sizeof(int*)*size);
+    m->max_temp_value = max_temp_value;
+    m->matrix[m->middle_index] = max_temp_value;
+    return 0;
+}
+
+/**
+ * Show matrix content.
+ */
+void print_matrix(matrix_representation * m){
+    printf("Matrix : \n");
+    int i;
+    for(i = 0; i < m->size; i++){
+        printf("%d ", m->matrix[i]);
+    }
+    printf("\n-------------\n");
+}
+
