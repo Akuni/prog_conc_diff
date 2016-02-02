@@ -13,9 +13,11 @@ typedef struct {
 
 
 
-int init_matrix(int, int, matrix_2d *);
+int init_matrix_2d(int, int, matrix_2d *);
 
-void print_matrix(matrix_2d *);
+void print_matrix_2d(matrix_2d *);
+
+int update_matrix(matrix_2d *);
 #define PROG_CONC_DIFF_MATRIX2D_H
 
 #endif //PROG_CONC_DIFF_MATRIX2D_H

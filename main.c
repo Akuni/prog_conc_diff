@@ -26,16 +26,23 @@
 
 #include "Matrix.h"
 #include "Physics.h"
+#include "Matrix2D.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     matrix_representation m;
     int status = init_matrix(7, 256, &m);
-	print_matrix(&m);
-    int i;
-    for(i = 0; i < 10; i++){
-        diffusion(&m,4/6.f,1/6.f);
+    print_matrix(&m);
+/*    int i;
+    for (i = 0; i < 10; i++) {
+        diffusion(&m, 4 / 6.f, 1 / 6.f);
         print_matrix(&m);
-    }
+    }*/
+
+    matrix_2d matrix2d;
+    int status2 = init_matrix_2d(12,256, &matrix2d);
+    print_matrix_2d(&matrix2d);
+
+    update_matrix(&matrix2d);
+}
 
 
