@@ -49,23 +49,33 @@ int main(int argc, char **argv) {
     while ((opt = getopt(argc, argv, "t:ami:s:e:")) != -1) {
         switch (opt) {
             case 't':
+                // t => number of thread
                 thread_number = atoi(optarg);
                 break;
             case 'a':
+                // a => display quarter of the matrix
                 flag_quarter = 1;
                 break;
             case 'm':
+                // m => display execution time
                 flag_executing_time = 1;
                 break;
             case 'i':
+                // i => number of execution (10000 default)
                 execution_number = atoi(optarg);
                 break;
             case 's':
-                // todo verification of the number 0 < i < 9
+                // s => problem size
                 problem_coeff_size = atoi(optarg);
+                if(problem_coeff_size < 0 ) problem_coeff_size = 0;
+                if(problem_coeff_size > 9)  problem_coeff_size = 9;
+
                 break;
             case 'e':
+                // e => exercise's number (1 to 5)
                 exercise_number = atoi(optarg);
+                if(exercise_number < 1) execution_number = 1;
+                if(exercise_number > 5) execution_number = 5;
                 break;
             default:
                 /* '?' */
@@ -76,25 +86,50 @@ int main(int argc, char **argv) {
         }
     }
 
+    // At least exponent of 4
     problem_coeff_size += 4;
-    printf("pb:%d\n", problem_coeff_size);
+    // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
     int problem_size = 1 << (problem_coeff_size);
+    printf("problem size:%d\n", problem_size);
 
-
+    // if -m, start chrono
     if (flag_executing_time) {
-
+        printf("starting chrono : . . .\n");
         begin = clock();
     }
+    // init the 2D matrix
     matrix_2d matrix2d;
-    int status2 = init_matrix_2d(problem_size, 50000, &matrix2d);
-    print_matrix_2d(&matrix2d);
+    int status = init_matrix_2d(problem_size, 50000, &matrix2d);
+    if(status == -1){
+        printf("couldn't create the matrix ! \n");
+        return -1;
+    }
 
-    update_matrix(&matrix2d);
+    // start process of diffusion
+    switch(exercise_number){
+        case 0:
+            // no thread
+            update_matrix(&matrix2d);
+            break;
+        case 1: // with thread posix
+        case 2: // with thread variable
+        case 3: // with thread mutex
+        case 4: // with OpenCL CPU
+        case 5: // with OpenCL GPU
+        default:
+            break;
+    }
 
+    // if -m, stop the chrono and display time
     if (flag_executing_time) {
         end = clock();
         time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
         printf("execution time : %lf\n", time_spent);
+    }
+
+    // if -a, display the top left quarter of the matrix
+    if(flag_quarter){
+        print_matrix_2d_quarter(&matrix2d);
     }
 }
 
