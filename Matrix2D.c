@@ -9,7 +9,7 @@
 
 int init_matrix_2d(int size, int max_temp_value, matrix_2d * m){
     m->size = size;
-    m->middle_index = size/2;
+    m->middle_index = size>>1;
     int i,j;
     // init matrix
     if (( m->matrix = malloc( size*sizeof( int * ))) == NULL ) { /* error */ }
@@ -50,7 +50,7 @@ int update_matrix(matrix_2d * m){
     for(i = 0; i < 10; i++){
         diffusion_2d(m, 4 / 6.f, 1 / 6.f, 0);
         diffusion_2d(m, 4 / 6.f, 1 / 6.f, 1);
-        print_matrix_2d(m);
     }
+    print_matrix_2d(m);
 }
 
