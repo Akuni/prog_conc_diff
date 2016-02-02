@@ -23,6 +23,7 @@
 
 
 #include <stdio.h>
+
 #include "Matrix.h"
 #include "Physics.h"
 
@@ -37,6 +38,4 @@ int main(int argc, char **argv)
         print_matrix(&m);
     }
 
-	return 0;
-}
 
