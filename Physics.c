@@ -47,6 +47,7 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
     // run through matrix
     int i,j;
     for(i = 0; i < m->size; i++){
+        if(!m->matrix[m->middle_index][i]) continue;
         for(j = 0; j < m->size; j++){
             result.matrix[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
         }
