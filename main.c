@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     switch(exercise_number){
         case 0:
             // no thread
-            update_matrix(&matrix2d);
+            update_matrix(&matrix2d, execution_number);
             break;
         case 1: // with thread posix
         case 2: // with thread variable

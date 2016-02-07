@@ -47,9 +47,9 @@ void print_matrix_2d(matrix_2d * m){
 /**
  * Update the 2D matrix by applying 2d diffusion on both X and Y axis.
  */
-int update_matrix(matrix_2d * m){
+int update_matrix(matrix_2d * m, int exec_number){
     int i;
-    for(i = 0; i < 10; i++){
+    for(i = 0; i < exec_number; i++){
         diffusion_2d(m, 4 / 6.f, 1 / 6.f, 0);
         diffusion_2d(m, 4 / 6.f, 1 / 6.f, 1);
         set_middle_to_max_temp(m);
