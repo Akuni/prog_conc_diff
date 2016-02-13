@@ -2,15 +2,12 @@
 // Created by user on 02/02/16.
 //
 
-#include <stdio.h>
 #include "Physics.h"
-#include "Matrix.h"
-#include "Matrix2D.h"
 
 
-int calculus(matrix_representation *m, int i, float coeff1, float coeff2);
+float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
 
-int calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens);
+float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens);
 
 int diffusion(matrix_representation * m, float coeff1, float coeff2){
     matrix_representation result;
@@ -30,13 +27,11 @@ int diffusion(matrix_representation * m, float coeff1, float coeff2){
     return 0;
 }
 
-
-
-int calculus(matrix_representation *m, int i, float coeff1, float coeff2){
+float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
     int ipp = i+1;
     int imm = i-1;
-    int left = 0 <= imm && imm < m->size ? m->matrix[imm] : 0;
-    int right = 0 <= ipp && ipp < m->size ? m->matrix[ipp] : 0;
+    float left = 0 <= imm && imm < m->size ? m->matrix[imm] : 0;
+    float right = 0 <= ipp && ipp < m->size ? m->matrix[ipp] : 0;
     return  m->matrix[i] * coeff1 + coeff2 *(left + right);
 }
 
@@ -61,8 +56,8 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
     return 0;
 }
 
-int calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens) {
-    int left, right = 0;
+float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens) {
+    float right,left;
     if(sens){
         int ipp = i+1;
         int imm = i-1;

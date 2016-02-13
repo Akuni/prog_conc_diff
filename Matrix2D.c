@@ -9,7 +9,7 @@
 #include "Matrix2D.h"
 #include "Physics.h"
 
-int init_matrix_2d(int size, int max_temp_value, matrix_2d * m){
+int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     m->size = size;
     // middle is at size / 2
     m->middle_index = size>>1;
@@ -17,12 +17,12 @@ int init_matrix_2d(int size, int max_temp_value, matrix_2d * m){
     m->half_range = size>>4;
     int i;
     // init matrix
-    if (( m->matrix = malloc( size*sizeof( int * ))) == NULL ) { /*error*/return -1;}
+    if (( m->matrix = malloc( size*sizeof( float * ))) == NULL ) { /*error*/return -1;}
     // init rows
     for ( i = 0; i < size; i++ ) {
-        if (( m->matrix[i] = malloc(sizeof(int)*  size )) == NULL )
+        if (( m->matrix[i] = malloc(sizeof(float)*  size )) == NULL )
         { /* error */  return -1;}
-        memset(m->matrix[i], 0, sizeof(int) * size);
+        memset(m->matrix[i], 0, sizeof(float) * size);
     }
     // set max temp
     m->max_temp_value = max_temp_value;
@@ -39,7 +39,7 @@ void print_matrix_2d(matrix_2d * m){
     int i,j;
     for(j = 0; j < m->size; j++){
         for(i = 0; i < m->size; i++){
-            printf("%d\t\t\t", m->matrix[i][j]);
+            printf("%d\t\t\t", (int) m->matrix[i][j]);
         }
         printf("\n");
     }
@@ -68,7 +68,7 @@ void print_matrix_2d_quarter(matrix_2d * m){
     int i,j;
     for(j = 0; j < m->middle_index; j++){
         for(i = 0; i < m->middle_index; i++){
-            printf("%d\t\t", m->matrix[i][j]);
+            printf("%d\t\t", (int) m->matrix[i][j]);
         }
         printf("\n");
     }
