@@ -27,9 +27,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "Matrix.h"
 #include "Physics.h"
-#include "Matrix2D.h"
 
 int main(int argc, char **argv) {
     // index to get args
@@ -131,6 +129,8 @@ int main(int argc, char **argv) {
     if(flag_quarter){
         print_matrix_2d_quarter(&matrix2d);
     }
+
+    free_matrix(&matrix2d);
 }
 
 

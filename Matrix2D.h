@@ -22,6 +22,8 @@ void print_matrix_2d_quarter(matrix_2d *);
 int update_matrix(matrix_2d *, int);
 
 void set_middle_to_max_temp(matrix_2d * m);
+
+void free_matrix(matrix_2d *);
 #define PROG_CONC_DIFF_MATRIX2D_H
 
 #endif //PROG_CONC_DIFF_MATRIX2D_H

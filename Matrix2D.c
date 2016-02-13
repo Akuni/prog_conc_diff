@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
+
 #include "Matrix2D.h"
 #include "Physics.h"
 
@@ -20,6 +22,7 @@ int init_matrix_2d(int size, int max_temp_value, matrix_2d * m){
     for ( i = 0; i < size; i++ ) {
         if (( m->matrix[i] = malloc(sizeof(int)*  size )) == NULL )
         { /* error */  return -1;}
+        memset(m->matrix[i], 0, sizeof(int) * size);
     }
     // set max temp
     m->max_temp_value = max_temp_value;
@@ -83,4 +86,14 @@ void set_middle_to_max_temp(matrix_2d * m){
             m->matrix[i][j] = m->max_temp_value;
         }
     }
+}
+
+/**
+ * Free the matrix
+ */
+void free_matrix(matrix_2d * m) {
+    for (unsigned i = 0; i < m->size; ++i) {
+        free(m->matrix[i]);
+    }
+    free (m);
 }
