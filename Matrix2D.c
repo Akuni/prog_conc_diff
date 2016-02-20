@@ -106,5 +106,5 @@ void free_matrix(matrix_2d * m) {
     for (unsigned i = 0; i < m->size; ++i) {
         free(m->matrix[i]);
     }
-    free (m);
+    free (m->matrix);
 }
