@@ -31,6 +31,13 @@ int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     return 0;
 }
 
+void reset_matrix(matrix_2d *m) {
+    for (unsigned i = 0; i < m->size; ++i) {
+        memset(m->matrix[i], 0, sizeof(float) * m->size);
+    }
+    set_middle_to_max_temp(m);
+}
+
 /**
  * Show matrix content.
  */

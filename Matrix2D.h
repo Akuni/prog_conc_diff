@@ -15,6 +15,8 @@ typedef struct {
 
 int init_matrix_2d(int, float, matrix_2d *);
 
+void reset_matrix(matrix_2d *);
+
 void print_matrix_2d(matrix_2d *);
 
 void print_matrix_2d_quarter(matrix_2d *);

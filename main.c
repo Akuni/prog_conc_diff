@@ -25,9 +25,9 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "Physics.h"
+#include "simulator.h"
 
 int main(int argc, char **argv) {
     // index to get args
@@ -39,10 +39,8 @@ int main(int argc, char **argv) {
     // the exercise number
     int exercise_number = 0;
 
-    // time variables
-    clock_t begin, end;
-    // total time spent
-    double time_spent;
+    // execution statistics
+    exec_stats stats;
 
     while ((opt = getopt(argc, argv, "t:ami:s:e:")) != -1) {
         switch (opt) {
@@ -72,8 +70,8 @@ int main(int argc, char **argv) {
             case 'e':
                 // e => exercise's number (1 to 5)
                 exercise_number = atoi(optarg);
-                if(exercise_number < 1) execution_number = 1;
-                if(exercise_number > 5) execution_number = 5;
+                if(exercise_number < 0) exercise_number = 0;
+                if(exercise_number > 5) exercise_number = 5;
                 break;
             default:
                 /* '?' */
@@ -90,11 +88,6 @@ int main(int argc, char **argv) {
     int problem_size = 1 << (problem_coeff_size);
     printf("problem size:%d\n", problem_size);
 
-    // if -m, start chrono
-    if (flag_executing_time) {
-        printf("starting chrono : . . .\n");
-        begin = clock();
-    }
     // init the 2D matrix
     matrix_2d matrix2d;
     int status = init_matrix_2d(problem_size, 50000, &matrix2d);
@@ -107,7 +100,7 @@ int main(int argc, char **argv) {
     switch(exercise_number){
         case 0:
             // no thread
-            update_matrix(&matrix2d, execution_number);
+            stats = runIterative(&matrix2d, flag_executing_time, 0, execution_number);
             break;
         case 1: // with thread posix
         case 2: // with thread variable
@@ -120,9 +113,7 @@ int main(int argc, char **argv) {
 
     // if -m, stop the chrono and display time
     if (flag_executing_time) {
-        end = clock();
-        time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-        printf("execution time : %lf\n", time_spent);
+        print_stats(&stats);
     }
 
     // if -a, display the top left quarter of the matrix
