@@ -35,14 +35,14 @@ int main(int argc, char **argv) {
     // various numbers : thread number, number of execution, the size of the problem
     int thread_number = 0, execution_number = 0, problem_coeff_size = 0;
     // various flags : flag to display only quarter, flag  to display executing time
-    int flag_quarter = 0, flag_executing_time = 0;
+    int flag_quarter = 0, flag_execution_time_cpu = 0, flag_execution_time_user = 0;
     // the exercise number
     int exercise_number = 0;
 
     // execution statistics
     exec_stats stats;
 
-    while ((opt = getopt(argc, argv, "t:ami:s:e:")) != -1) {
+    while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {
         switch (opt) {
             case 't':
                 // t => number of thread
@@ -53,8 +53,12 @@ int main(int argc, char **argv) {
                 flag_quarter = 1;
                 break;
             case 'm':
-                // m => display execution time
-                flag_executing_time = 1;
+                // m => display execution time (CPU)
+                flag_execution_time_cpu = 1;
+                break;
+            case 'M':
+                // M => display execution time (USER)
+                flag_execution_time_user = 1;
                 break;
             case 'i':
                 // i => number of execution (10000 default)
@@ -100,7 +104,7 @@ int main(int argc, char **argv) {
     switch(exercise_number){
         case 0:
             // no thread
-            stats = runIterative(&matrix2d, flag_executing_time, 0, execution_number);
+            stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
             break;
         case 1: // with thread posix
         case 2: // with thread variable
@@ -111,9 +115,12 @@ int main(int argc, char **argv) {
             break;
     }
 
-    // if -m, stop the chrono and display time
-    if (flag_executing_time) {
-        print_stats(&stats);
+    // if -m, display time
+    if (flag_execution_time_cpu) {
+        printf("Execution time (cpu) : %lf\n", stats.execution_time_cpu);
+    }
+    if (flag_execution_time_user) {
+        printf("Execution time (user) : %lf\n", stats.execution_time_user);
     }
 
     // if -a, display the top left quarter of the matrix

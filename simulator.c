@@ -14,12 +14,17 @@ exec_stats compute_average(exec_stats stats_array[10], int array_length);
  * If execution stats are ordered, return them.
  */
 exec_stats run(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
+    printf("Running simulation\n");
     exec_stats stats;
     init_stats(&stats);
     // if -m, start chrono
-    clock_t begin = 0, end = 0;
+    clock_t clockBegin = 0;
+    time_t timeBegin = 0;
     if (measure_cpu) {
-        begin = clock();
+        clockBegin = clock();
+    }
+    if (measure_usr) {
+        timeBegin = time(NULL);
     }
 
     // init the 2D matrix
@@ -28,8 +33,10 @@ exec_stats run(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execut
 
     // if -m, stop the chrono
     if (measure_cpu) {
-        end = clock();
-        stats.execution_time_cpu = (double) (end - begin) / CLOCKS_PER_SEC;
+        stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
+    }
+    if (measure_usr) {
+        stats.execution_time_user = time(NULL) - timeBegin;
     }
     return stats;
 }
@@ -51,9 +58,12 @@ exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, i
     return stats;
 }
 
+/**
+ * Compute the average execution stats
+ */
 exec_stats compute_average(exec_stats stats_array[], int array_length) {
     exec_stats stats;
-    // If we have not enough stats to ignore the first and the last, we chose the first stats
+    // If we don't have enough stats to ignore the first and the last, we chose the first value
     if (1 < array_length && array_length < 3) {
         stats = stats_array[0];
     } else {

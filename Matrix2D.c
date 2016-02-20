@@ -17,12 +17,14 @@ int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     m->half_range = size>>4;
     int i;
     // init matrix
-    if (( m->matrix = malloc( size*sizeof( float * ))) == NULL ) { /*error*/return -1;}
+    if (( m->matrix = malloc( size*sizeof(float *))) == NULL ) { /*error*/return -1;}
     // init rows
     for ( i = 0; i < size; i++ ) {
-        if (( m->matrix[i] = malloc(sizeof(float)*  size )) == NULL )
+        if (( m->matrix[i] = malloc(sizeof(float) * size )) == NULL )
         { /* error */  return -1;}
-        memset(m->matrix[i], 0, sizeof(float) * size);
+        for (unsigned j = 0; j < size; ++j) {
+            m->matrix[i][j] = 0;
+        }
     }
     // set max temp
     m->max_temp_value = max_temp_value;
@@ -33,7 +35,9 @@ int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
 
 void reset_matrix(matrix_2d *m) {
     for (unsigned i = 0; i < m->size; ++i) {
-        memset(m->matrix[i], 0, sizeof(float) * m->size);
+        for (unsigned j = 0; j < m->size; ++j) {
+            m->matrix[i][j] = 0;
+        }
     }
     set_middle_to_max_temp(m);
 }
