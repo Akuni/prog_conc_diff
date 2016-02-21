@@ -3,6 +3,7 @@
 //
 
 #include "Physics.h"
+#include "Matrix2D.h"
 
 
 float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
@@ -36,30 +37,27 @@ float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
 }
 
 int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
-    matrix_2d result;
-    init_matrix_2d(m->size, m->middle_index, &result);
+
+    reset_buffer(m);
 
     // run through matrix
     int i,j;
     for(i = 0; i < m->size; i++){
         if(!m->matrix[m->middle_index][i]) continue;
         for(j = 0; j < m->size; j++){
-            result.matrix[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
+            m->buffer[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
         }
     }
 
     // copy results
     /*for(i = 0; i < m->size; i++){
-        m->matrix[i] = result.matrix[i];
+        m->matrix[i] = m->buffer[i];
     }*/
     for(i = 0; i < m->size; i++){
-        for(unsigned j = 0; j < m->size; ++j) {
-            m->matrix[i][j] = result.matrix[i][j];
+        for(j = 0; j < m->size; ++j) {
+            m->matrix[i][j] = m->buffer[i][j];
         }
-
     }
-
-    free_matrix(&result);
     return 0;
 }
 

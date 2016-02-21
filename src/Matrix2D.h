@@ -6,6 +6,7 @@
 typedef struct {
     int size;
     float ** matrix;
+    float ** buffer;
     int middle_index;
     int half_range;
     float max_temp_value;
@@ -14,6 +15,10 @@ typedef struct {
 
 
 int init_matrix_2d(int, float, matrix_2d *);
+
+float** allocate_float_matrix(int size);
+
+void reset_buffer(matrix_2d *);
 
 void reset_matrix(matrix_2d *);
 

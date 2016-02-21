@@ -15,16 +15,13 @@ int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     m->middle_index = size>>1;
     // range/2 is size / 8
     m->half_range = size>>4;
-    int i;
-    // init matrix
-    if (( m->matrix = malloc( size*sizeof(float *))) == NULL ) { /*error*/return -1;}
-    // init rows
-    for ( i = 0; i < size; i++ ) {
-        if (( m->matrix[i] = malloc(sizeof(float) * size )) == NULL )
-        { /* error */  return -1;}
-        for (unsigned j = 0; j < size; ++j) {
-            m->matrix[i][j] = 0;
-        }
+
+    if (!(m->matrix = allocate_float_matrix(size))) {
+        return -1;
+    }
+
+    if (!(m->buffer = allocate_float_matrix(size))) {
+        return -1;
     }
     // set max temp
     m->max_temp_value = max_temp_value;
@@ -32,6 +29,30 @@ int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     set_middle_to_max_temp(m);
     return 0;
 }
+
+float** allocate_float_matrix(int size) {
+    float** m;
+    // init matrix
+    if (( m = malloc( size*sizeof(float *))) == NULL ) { /*error*/return NULL;}
+    // init rows
+    for ( int i = 0; i < size; i++ ) {
+        if (( m[i] = malloc(sizeof(float) * size )) == NULL )
+        { /* error */  return NULL;}
+        for (unsigned j = 0; j < size; ++j) {
+            m[i][j] = 0;
+        }
+    }
+    return m;
+}
+
+void reset_buffer(matrix_2d * m) {
+    for (int i = 0; i < m->size; ++i) {
+        for (int j = 0; j < m->size; ++j) {
+            m->buffer[i][j] = 0;
+        }
+    }
+}
+
 
 void reset_matrix(matrix_2d *m) {
     for (unsigned i = 0; i < m->size; ++i) {
@@ -87,6 +108,7 @@ void print_matrix_2d_quarter(matrix_2d * m){
     printf("\n-------------\n");
 }
 
+
 /**
  * Set or reset middle squares to the max temp value.
  */
@@ -105,6 +127,8 @@ void set_middle_to_max_temp(matrix_2d * m){
 void free_matrix(matrix_2d * m) {
     for (unsigned i = 0; i < m->size; ++i) {
         free(m->matrix[i]);
+        free(m->buffer[i]);
     }
     free (m->matrix);
+    free (m->buffer);
 }
