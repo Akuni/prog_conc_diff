@@ -26,9 +26,11 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
 
 #include "Physics.h"
 #include "simulator.h"
+struct rusage;
 
 int main(int argc, char **argv) {
     // index to get args
@@ -97,8 +99,10 @@ int main(int argc, char **argv) {
         }
     }
 
+    struct rusage usage;
 
     for (int i = 0; i < nb_sizes; ++i) {
+        getrusage(RUSAGE_SELF, &usage);
         problem_coeff_size = array_problem_coeff_size[i];
         // At least exponent of 4
         problem_coeff_size += 4;
@@ -141,7 +145,8 @@ int main(int argc, char **argv) {
         if(flag_quarter){
             print_matrix_2d_quarter(&matrix2d);
         }
-
+        getrusage(RUSAGE_SELF, &usage);
+        printf("Memory usage : %ld\n", usage.ru_maxrss);
         free_matrix(&matrix2d);
     }
 
