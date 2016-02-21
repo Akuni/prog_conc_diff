@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Physics.h"
 #include "Simulator.h"
@@ -32,6 +33,9 @@
 int main(int argc, char **argv) {
     // index to get args
     int opt = 0;
+    // different problem size to be executed
+    int *array_problem_coeff_size;
+    int nb_sizes = 0;
     // various numbers : thread number, number of execution, the size of the problem
     int thread_number = 0, execution_number = 10000, problem_coeff_size = 0;
     // various flags : flag to display only quarter, flag  to display executing time
@@ -41,6 +45,7 @@ int main(int argc, char **argv) {
 
     // execution statistics
     exec_stats stats;
+    char c;
 
     while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {
         switch (opt) {
@@ -66,9 +71,17 @@ int main(int argc, char **argv) {
                 break;
             case 's':
                 // s => problem size
-                problem_coeff_size = atoi(optarg);
-                if(problem_coeff_size < 0 ) problem_coeff_size = 0;
-                if(problem_coeff_size > 9)  problem_coeff_size = 9;
+                nb_sizes = strlen(optarg);
+                array_problem_coeff_size = malloc(nb_sizes * sizeof(int));
+                printf("nb_sizes, %d\n", nb_sizes);
+                for (int i = 0; i < nb_sizes; ++i) {
+                    c = optarg[i];
+                    array_problem_coeff_size[i] = atoi(&c);
+                    if(array_problem_coeff_size[i] < 0 ) array_problem_coeff_size[i] = 0;
+                    if(array_problem_coeff_size[i] > 9)  array_problem_coeff_size[i] = 9;
+                    printf("Problem size : %d\n", array_problem_coeff_size[i]);
+                }
+
 
                 break;
             case 'e':
@@ -86,49 +99,55 @@ int main(int argc, char **argv) {
         }
     }
 
-    // At least exponent of 4
-    problem_coeff_size += 4;
-    // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
-    int problem_size = 1 << (problem_coeff_size);
-    printf("problem size:%d\n", problem_size);
 
-    // init the 2D matrix
-    matrix_2d matrix2d;
-    int status = init_matrix_2d(problem_size, 50000, &matrix2d);
-    if(status == -1){
-        printf("couldn't create the matrix ! \n");
-        return -1;
+    for (int i = 0; i < nb_sizes; ++i) {
+        problem_coeff_size = array_problem_coeff_size[i];
+        // At least exponent of 4
+        problem_coeff_size += 4;
+        // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
+        int problem_size = 1 << (problem_coeff_size);
+        printf("problem size:%d\n", problem_size);
+
+        // init the 2D matrix
+        matrix_2d matrix2d;
+        int status = init_matrix_2d(problem_size, 50000, &matrix2d);
+        if(status == -1){
+            printf("couldn't create the matrix ! \n");
+            return -1;
+        }
+
+        // start process of diffusion
+        switch(exercise_number){
+            case 0:
+                // no thread
+                stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
+                break;
+            case 1: // with thread posix
+            case 2: // with thread variable
+            case 3: // with thread mutex
+            case 4: // with OpenCL CPU
+            case 5: // with OpenCL GPU
+            default:
+                break;
+        }
+
+        // if -m, display time
+        if (flag_execution_time_cpu) {
+            printf("Execution time (cpu) : %lf\n", stats.execution_time_cpu);
+        }
+        if (flag_execution_time_user) {
+            printf("Execution time (user) : %lf\n", stats.execution_time_user);
+        }
+
+        // if -a, display the top left quarter of the matrix
+        if(flag_quarter){
+            print_matrix_2d_quarter(&matrix2d);
+        }
+
+        free_matrix(&matrix2d);
     }
 
-    // start process of diffusion
-    switch(exercise_number){
-        case 0:
-            // no thread
-            stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
-            break;
-        case 1: // with thread posix
-        case 2: // with thread variable
-        case 3: // with thread mutex
-        case 4: // with OpenCL CPU
-        case 5: // with OpenCL GPU
-        default:
-            break;
-    }
-
-    // if -m, display time
-    if (flag_execution_time_cpu) {
-        printf("Execution time (cpu) : %lf\n", stats.execution_time_cpu);
-    }
-    if (flag_execution_time_user) {
-        printf("Execution time (user) : %lf\n", stats.execution_time_user);
-    }
-
-    // if -a, display the top left quarter of the matrix
-    if(flag_quarter){
-        print_matrix_2d_quarter(&matrix2d);
-    }
-
-    free_matrix(&matrix2d);
+    free(array_problem_coeff_size);
 }
 
 
