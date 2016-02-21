@@ -28,7 +28,7 @@
 #include <string.h>
 
 #include "Physics.h"
-#include "Simulator.h"
+#include "simulator.h"
 
 int main(int argc, char **argv) {
     // index to get args

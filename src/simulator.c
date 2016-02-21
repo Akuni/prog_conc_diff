@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "Matrix2D.h"
-#include "Simulator.h"
+#include "simulator.h"
 
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 

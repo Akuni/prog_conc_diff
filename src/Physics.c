@@ -49,10 +49,17 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
     }
 
     // copy results
-    for(i = 0; i < m->size; i++){
+    /*for(i = 0; i < m->size; i++){
         m->matrix[i] = result.matrix[i];
+    }*/
+    for(i = 0; i < m->size; i++){
+        for(unsigned j = 0; j < m->size; ++j) {
+            m->matrix[i][j] = result.matrix[i][j];
+        }
+
     }
 
+    free_matrix(&result);
     return 0;
 }
 
