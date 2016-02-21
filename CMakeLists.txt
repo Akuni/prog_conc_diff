@@ -3,5 +3,5 @@ project(prog_conc_diff)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c99")
 
-set(SOURCE_FILES main.c Matrix.c Matrix.h Physics.c Physics.h Matrix2D.c Matrix2D.h simulator.h simulator.c)
-add_executable(prog_conc_diff ${SOURCE_FILES} Matrix.c Matrix.h Physics.c Physics.h Matrix2D.c Matrix2D.h)
+set(SOURCE_FILES src/main.c src/Matrix.c src/Matrix.h src/Physics.c src/Physics.h src/Matrix2D.c src/Matrix2D.h src/Simulator.h src/Simulator.c)
+add_executable(prog_conc_diff ${SOURCE_FILES} src/Matrix.c src/Matrix.h src/Physics.c src/Physics.h src/Matrix2D.c src/Matrix2D.h)

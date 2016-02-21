@@ -27,13 +27,13 @@
 #include <stdlib.h>
 
 #include "Physics.h"
-#include "simulator.h"
+#include "Simulator.h"
 
 int main(int argc, char **argv) {
     // index to get args
     int opt = 0;
     // various numbers : thread number, number of execution, the size of the problem
-    int thread_number = 0, execution_number = 0, problem_coeff_size = 0;
+    int thread_number = 0, execution_number = 10000, problem_coeff_size = 0;
     // various flags : flag to display only quarter, flag  to display executing time
     int flag_quarter = 0, flag_execution_time_cpu = 0, flag_execution_time_user = 0;
     // the exercise number

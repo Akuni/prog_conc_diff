@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "Matrix2D.h"
-#include "simulator.h"
+#include "Simulator.h"
 
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
@@ -14,7 +14,6 @@ exec_stats compute_average(exec_stats stats_array[10], int array_length);
  * If execution stats are ordered, return them.
  */
 exec_stats run(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
-    printf("Running simulation\n");
     exec_stats stats;
     init_stats(&stats);
     // if -m, start chrono
