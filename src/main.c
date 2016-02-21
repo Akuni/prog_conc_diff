@@ -73,13 +73,11 @@ int main(int argc, char **argv) {
                 // s => problem size
                 nb_sizes = strlen(optarg);
                 array_problem_coeff_size = malloc(nb_sizes * sizeof(int));
-                printf("nb_sizes, %d\n", nb_sizes);
                 for (int i = 0; i < nb_sizes; ++i) {
                     c = optarg[i];
                     array_problem_coeff_size[i] = atoi(&c);
                     if(array_problem_coeff_size[i] < 0 ) array_problem_coeff_size[i] = 0;
                     if(array_problem_coeff_size[i] > 9)  array_problem_coeff_size[i] = 9;
-                    printf("Problem size : %d\n", array_problem_coeff_size[i]);
                 }
 
 
