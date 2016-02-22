@@ -1,6 +1,7 @@
-//
-// Created by user on 02/02/16.
-//
+/**
+ * @authors : Nicolas Sarroche, Nicolas Lecourtois
+ */
+
 
 #include <stdio.h>
 #include <malloc.h>

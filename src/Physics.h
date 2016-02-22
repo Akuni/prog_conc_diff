@@ -1,6 +1,6 @@
-//
-// Created by user on 02/02/16.
-//
+/**
+ * @authors : Nicolas Sarroche
+ */
 
 #include "Matrix.h"
 #include "Matrix2D.h"

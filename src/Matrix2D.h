@@ -1,6 +1,7 @@
-//
-// Created by user on 02/02/16.
-//
+/**
+ * @authors : Nicolas Sarroche, Nicolas Lecourtois
+ */
+
 
 #ifndef PROG_CONC_DIFF_MATRIX2D_H
 typedef struct {

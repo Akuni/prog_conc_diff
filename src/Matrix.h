@@ -1,6 +1,7 @@
-//
-// Created by Akuni on 02/02/16.
-//
+/**
+ * @authors : Nicolas Sarroche
+ */
+
 
 #ifndef PROG_CONC_DIFF_MATRIX_C_H
 typedef struct {

@@ -1,6 +1,7 @@
-//
-// Created by Akuni on 02/02/16.
-//
+/**
+ * @authors : Nicolas Sarroche
+ */
+
 
 #include <malloc.h>
 #include <stdio.h>

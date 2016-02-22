@@ -1,6 +1,7 @@
-//
-// Created by Nicolas on 20/02/2016.
-//
+/**
+ * @authors : Nicolas Lecourtois
+ */
+
 
 #include <time.h>
 #include <stdio.h>
