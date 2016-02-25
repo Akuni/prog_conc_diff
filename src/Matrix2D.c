@@ -114,8 +114,12 @@ void print_matrix_2d_quarter(matrix_2d * m){
  */
 void set_middle_to_max_temp(matrix_2d * m){
     int i,j;
-    for(i = m->middle_index - m->half_range; i <= m->middle_index + m->half_range; i ++){
-        for(j = m->middle_index - m->half_range; j<=m->middle_index + m->half_range; j++){
+    int inferior = m->middle_index - m->half_range;
+    int superior = m->middle_index + m->half_range;
+    //printf("mid/half : %d,%d", m->middle_index, m->half_range);
+    //printf("inf/sup : %d,%d\n",inferior, superior);
+    for(i = inferior; i <= superior; i ++){
+        for(j = inferior; j<= superior; j++){
             m->matrix[i][j] = m->max_temp_value;
         }
     }

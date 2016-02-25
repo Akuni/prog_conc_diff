@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
 
         // init the 2D matrix
         matrix_2d matrix2d;
-        int status = init_matrix_2d(problem_size, 50000, &matrix2d);
+        int status = init_matrix_2d(problem_size, 128, &matrix2d);
         if(status == -1){
             printf("couldn't create the matrix ! \n");
             return -1;
