@@ -54,6 +54,9 @@ int main(int argc, char **argv) {
             case 't':
                 // t => number of thread
                 thread_number = atoi(optarg);
+                if(thread_number < 0) thread_number = 0;
+                if(thread_number > 5) thread_number = 5;
+                thread_number *= 2;
                 break;
             case 'a':
                 // a => display quarter of the matrix
@@ -125,6 +128,8 @@ int main(int argc, char **argv) {
                 stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
                 break;
             case 1: // with thread posix
+                stats = runThreadPosix(&matrix2d, thread_number,flag_execution_time_cpu, flag_execution_time_user, execution_number);
+                break;
             case 2: // with thread variable
             case 3: // with thread mutex
             case 4: // with OpenCL CPU
@@ -152,19 +157,4 @@ int main(int argc, char **argv) {
 
     free(array_problem_coeff_size);
 }
-
-
-
-// old matrix things
-/*
-matrix_representation m;
-int status = init_matrix(problem_size, 256, &m);
-print_matrix(&m);
-int i;
-for (i = 0; i < 10; i++) {
-    diffusion(&m, 4 / 6.f, 1 / 6.f);
-    print_matrix(&m);
-}
- */
-
 

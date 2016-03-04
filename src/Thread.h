@@ -4,5 +4,28 @@
 
 #ifndef PROG_CONC_DIFF_THREAD_H
 #define PROG_CONC_DIFF_THREAD_H
+#include <pthread.h>
+#include "Matrix2D.h"
+
+typedef struct {
+    int size;
+    matrix_2d* matrix2d;
+    int idX, idY;
+    int exec_number;
+
+} matrix_chunk;
+
+
+extern pthread_barrier_t barrier_a,  barrier_b, barrier_c;
+
+void main_posix_thread(void * data);
+
+matrix_chunk * init_chunk(matrix_chunk * m, int size, int number, int total_thread, int exec, matrix_2d* matrix2d);
+
+int update_section(matrix_chunk * m, int sens);
+
+void copy_buffer(matrix_chunk * m);
+
+int end_thread(matrix_chunk * m);
 
 #endif //PROG_CONC_DIFF_THREAD_H

@@ -4,16 +4,21 @@
 
 #include <time.h>
 #include <stdio.h>
+#include <pthread.h>
+#include <malloc.h>
+#include <math.h>
+#include <stdlib.h>
 #include "Matrix2D.h"
 #include "simulator.h"
-
+#include "Thread.h"
+pthread_barrier_t   barrier_a,  barrier_b;
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
 /**
  * Run the simulation once
  * If execution stats are ordered, return them.
  */
-exec_stats run(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
+exec_stats run_one_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
     exec_stats stats;
     init_stats(&stats);
     // if -m, start chrono
@@ -49,7 +54,7 @@ exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, i
     int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
 
     for (unsigned i = 0; i < nb_iteration; ++i) {
-        stats_array[i] = run(matrix2d, measure_cpu, measure_usr, execution_number);
+        stats_array[i] = run_one_iterative(matrix2d, measure_cpu, measure_usr, execution_number);
     }
 
     exec_stats stats = compute_average(stats_array, nb_iteration);
@@ -80,6 +85,26 @@ exec_stats compute_average(exec_stats stats_array[], int array_length) {
     return stats;
 }
 
+
+exec_stats runThreadPosix(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number) {
+    exec_stats stats_array[NB_ITERATION];
+    int flag_must_make_average = cpu || user;
+    int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
+
+    //print_matrix_2d(matrix2d);
+    for (unsigned i = 0; i < nb_iteration; ++i) {
+        reset_matrix(matrix2d);
+        stats_array[i] = run_one_posix(matrix2d, number, cpu, user, execution_number);
+        printf("%d iteration -> %.4fs(cpu), %.4fs (user)\n", (i+1), stats_array[i].execution_time_cpu, stats_array[i].execution_time_user);
+    }
+
+    exec_stats stats = compute_average(stats_array, nb_iteration);
+
+    return stats;
+}
+
+
+
 void init_stats(exec_stats * stats) {
     stats->execution_time_cpu = 0;
     stats->execution_time_user = 0;
@@ -89,4 +114,80 @@ void print_stats(exec_stats * stats) {
     printf("Execution statistics\n");
     printf(" Cpu exec time : %lf\n", stats->execution_time_cpu);
     printf(" User exec time : %lf\n", stats->execution_time_cpu);
+}
+
+
+exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number) {
+
+    exec_stats stats;
+    init_stats(&stats);
+    // if -m, start chrono
+    clock_t clockBegin = 0;
+    time_t timeBegin = 0;
+    if (measure_cpu) {
+        clockBegin = clock();
+    }
+    if (measure_usr) {
+        timeBegin = time(NULL);
+    }
+
+    // reset buffer
+    reset_buffer(matrix2d);
+
+    // total thread number
+    unsigned thread_total = (unsigned) 1 << (thread_number);
+    // number of thread per "line"
+    int thread_by_line = (int) sqrtl((long)thread_total);
+    // block size of a thread
+    int size = matrix2d->size / thread_by_line;
+
+    if(!size){
+        fprintf(stderr, "error: With %d threads, the size is %d, which is impossible ! \n", thread_total, size );
+        exit(0);
+    }
+
+    // init barriers
+    pthread_barrier_init(&barrier_a,NULL, thread_total);
+    pthread_barrier_init(&barrier_b,NULL, thread_total);
+    //pthread_barrier_init(&barrier_c,NULL, thread_total);
+
+    // init thread chunks
+    // TODO TESTER MALLOC
+    matrix_chunk ** array_chunk = (matrix_chunk**) malloc(sizeof(matrix_chunk)* thread_total);
+    for(int i = 0; i < thread_total ;  i++){
+        // TODO TESTER MALLOC
+        array_chunk[i] = malloc(sizeof(matrix_chunk));
+        array_chunk[i] = init_chunk(array_chunk[i], size, i, thread_by_line, execution_number, matrix2d);
+    }
+
+    // init threads
+    pthread_t  array[thread_total];
+    for(int i = 0; i < thread_total; i++){
+        if(array_chunk[i] == NULL){
+            fprintf(stderr, "error: Cannot create chunk # %d\n", i);
+            exit(0);
+        }
+
+        if (pthread_create(&array[i], NULL, (void*) main_posix_thread, array_chunk[i]) != 0) {
+            fprintf(stderr, "error: Cannot create thread # %d\n", i);
+            break;
+        }
+    }
+
+    // join threads
+    void * retvals[thread_total];
+    for (int i = 0; i < thread_total; ++i) {
+        if (pthread_join(array[i], &retvals[i]) != 0) {
+            fprintf(stderr, "error: Cannot join thread # %d\n", i);
+        }
+    }
+
+    // if -m, stop the chrono
+    if (measure_cpu) {
+        stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
+    }
+    if (measure_usr) {
+        stats.execution_time_user = time(NULL) - timeBegin;
+    }
+    return stats;
 }

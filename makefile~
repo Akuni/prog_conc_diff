@@ -3,7 +3,7 @@ SRC = -l src -lm
 
 
 prog: bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o bin/Thread.o
-	$(GCC)  bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o  bin/Thread.o  -o bin/prog -lm -lpthread
+	$(GCC)  bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o  bin/Thread.o  -o bin/prog -lpthread
 
 bin/main.o: src/main.c
 	$(GCC) -c src/main.c -o bin/main.o $(SRC)

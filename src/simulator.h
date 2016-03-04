@@ -14,9 +14,13 @@ typedef struct {
     double execution_time_user;
 } exec_stats;
 
-exec_stats run(matrix_2d *, int measure_cpu, int measure_usr, int execution_number);
+exec_stats run_one_iterative(matrix_2d *, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number);
 
 exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats runThreadPosix(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number);
 
 void init_stats(exec_stats * stats);
 
