@@ -18,16 +18,3 @@ int init_matrix(int size, float max_temp_value, matrix_representation * m){
     m->matrix[m->middle_index] = max_temp_value;
     return 0;
 }
-
-/**
- * Show matrix content.
- */
-void print_matrix(matrix_representation * m){
-    printf("Matrix : \n");
-    int i;
-    for(i = 0; i < m->size; i++){
-        printf("%f ", m->matrix[i]);
-    }
-    printf("\n-------------\n");
-}
-

@@ -5,6 +5,7 @@
 
 #include "Physics.h"
 #include "Matrix2D.h"
+#include "Matrix.h"
 
 
 float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
@@ -50,10 +51,7 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
         }
     }
 
-    // copy results
-    /*for(i = 0; i < m->size; i++){
-        m->matrix[i] = m->buffer[i];
-    }*/
+    /* Copy from buffer */
     for(i = 0; i < m->size; i++){
         for(j = 0; j < m->size; ++j) {
             m->matrix[i][j] = m->buffer[i][j];

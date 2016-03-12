@@ -15,8 +15,6 @@ typedef struct {
 
 int init_matrix(int, float, matrix_representation *);
 
-void print_matrix(matrix_representation *);
-
 #define PROG_CONC_DIFF_MATRIX_C_H
 
 #endif //PROG_CONC_DIFF_MATRIX_C_H

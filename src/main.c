@@ -72,18 +72,3 @@ int main(int argc, char **argv) {
     free_sim_parameters(&p);
 }
 
-
-
-// old matrix things
-/*
-matrix_representation m;
-int status = init_matrix(problem_size, 256, &m);
-print_matrix(&m);
-int i;
-for (i = 0; i < 10; i++) {
-    diffusion(&m, 4 / 6.f, 1 / 6.f);
-    print_matrix(&m);
-}
- */
-
-
