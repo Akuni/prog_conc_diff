@@ -91,3 +91,63 @@ void print_stats(exec_stats * stats) {
     printf(" Cpu exec time : %lf\n", stats->execution_time_cpu);
     printf(" User exec time : %lf\n", stats->execution_time_cpu);
 }
+
+int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
+    // index to get args
+    int opt = 0;
+    while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {
+        char c;
+        switch (opt) {
+            case 't':
+                // t => number of thread
+                p->thread_number = atoi(optarg);
+                break;
+            case 'a':
+                // a => display quarter of the matrix
+                p->flag_quarter = 1;
+                break;
+            case 'm':
+                // m => display execution time (CPU)
+                p->flag_execution_time_cpu = 1;
+                break;
+            case 'M':
+                // M => display execution time (USER)
+                p->flag_execution_time_user = 1;
+                break;
+            case 'i':
+                // i => number of execution (10000 default)
+                p->execution_number = atoi(optarg);
+                break;
+            case 's':
+                // s => problem size
+                p->nb_sizes = strlen(optarg);
+                if ((p->array_problem_coeff_size = malloc(p->nb_sizes * sizeof(int))) == NULL) return 0; /*error*/
+                for (int i = 0; i < p->nb_sizes; ++i) {
+                    c = optarg[i];
+                    p->array_problem_coeff_size[i] = atoi(&c);
+                    if(p->array_problem_coeff_size[i] < 0 ) p->array_problem_coeff_size[i] = 0;
+                    if(p->array_problem_coeff_size[i] > 9)  p->array_problem_coeff_size[i] = 9;
+                }
+
+
+                break;
+            case 'e':
+                // e => exercise's number (1 to 5)
+                p->exercise_number = atoi(optarg);
+                if(p->exercise_number < 0) p->exercise_number = 0;
+                if(p->exercise_number > 5) p->exercise_number = 5;
+                break;
+            default:
+                /* '?' */
+                fprintf(stderr,
+                        "Usage: %s [-t thead], [-a] firstquater,[-m] display executing time, [-i number] number of executions, [-s int] size of the problem, [-e number] execution number  \n",
+                        argv[0]);
+                return 0;
+        }
+    }
+    return 1;
+}
+
+void free_sim_parameters(sim_parameters *p) {
+    free(p->array_problem_coeff_size);
+}
