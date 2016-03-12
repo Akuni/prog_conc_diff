@@ -11,6 +11,7 @@
 #include "Matrix2D.h"
 #include "simulator.h"
 #include "Thread.h"
+
 pthread_barrier_t   barrier_a,  barrier_b;
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
@@ -53,8 +54,12 @@ exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, i
     int flag_must_make_average = measure_cpu || measure_usr;
     int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
 
+    printf("Iterative : \n");
     for (unsigned i = 0; i < nb_iteration; ++i) {
         stats_array[i] = run_one_iterative(matrix2d, measure_cpu, measure_usr, execution_number);
+
+        printf("%d iteration -> %.4fs(cpu), %.4fs (user)\n", (i+1), stats_array[i].execution_time_cpu, stats_array[i].execution_time_user);
+
     }
 
     exec_stats stats = compute_average(stats_array, nb_iteration);
@@ -91,11 +96,11 @@ exec_stats runThreadPosix(matrix_2d * matrix2d, int number, int cpu, int user, i
     int flag_must_make_average = cpu || user;
     int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
 
-    //print_matrix_2d(matrix2d);
+    printf("Posix : \n");
     for (unsigned i = 0; i < nb_iteration; ++i) {
         reset_matrix(matrix2d);
         stats_array[i] = run_one_posix(matrix2d, number, cpu, user, execution_number);
-        printf("%d iteration -> %.4fs(cpu), %.4fs (user)\n", (i+1), stats_array[i].execution_time_cpu, stats_array[i].execution_time_user);
+        //printf("%d iteration -> %.4fs(cpu), %.4fs (user)\n", (i+1), stats_array[i].execution_time_cpu, stats_array[i].execution_time_user);
     }
 
     exec_stats stats = compute_average(stats_array, nb_iteration);
@@ -143,20 +148,28 @@ exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu
 
     if(!size){
         fprintf(stderr, "error: With %d threads, the size is %d, which is impossible ! \n", thread_total, size );
-        exit(0);
+        return stats;
+        //exit(0);
     }
 
     // init barriers
     pthread_barrier_init(&barrier_a,NULL, thread_total);
     pthread_barrier_init(&barrier_b,NULL, thread_total);
-    //pthread_barrier_init(&barrier_c,NULL, thread_total);
 
     // init thread chunks
-    // TODO TESTER MALLOC
     matrix_chunk ** array_chunk = (matrix_chunk**) malloc(sizeof(matrix_chunk)* thread_total);
+    if(array_chunk == NULL){
+        fprintf(stderr, "error: Cannot allocate chunk array !\n");
+        exit(0);
+    }
+
     for(int i = 0; i < thread_total ;  i++){
         // TODO TESTER MALLOC
         array_chunk[i] = malloc(sizeof(matrix_chunk));
+        if(array_chunk[i] == NULL){
+            fprintf(stderr, "error: Cannot create chunk # %d\n", i);
+            exit(0);
+        }
         array_chunk[i] = init_chunk(array_chunk[i], size, i, thread_by_line, execution_number, matrix2d);
     }
 

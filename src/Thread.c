@@ -6,10 +6,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include "Thread.h"
-#include "Matrix2D.h"
 #include "Physics.h"
 
-pthread_barrier_t   barrier_a,  barrier_b, barrier_c;
+pthread_barrier_t   barrier_a,  barrier_b;
 
 void main_posix_thread(void * data){
     matrix_chunk * chunk = (matrix_chunk *) data;
@@ -23,18 +22,20 @@ void main_posix_thread(void * data){
         update_section(chunk, 1);
         // wait all thread
         pthread_barrier_wait(&barrier_b);
-        copy_buffer(chunk);
-        //reset_buffer(chunk->matrix2d);
+        // swap pointers
+        swap_matrix(chunk);
+        // wait all thread
         pthread_barrier_wait(&barrier_a);
         // algo from top to bottom
         update_section(chunk, 0);
         // wait all thread
         pthread_barrier_wait(&barrier_b);
-        copy_buffer(chunk);
+        // swap pointers
+        swap_matrix(chunk);
         // update center
         set_middle_to_max_temp(chunk->matrix2d);
+        // wait all thread
         pthread_barrier_wait(&barrier_a);
-
     }
     // fin
     free(chunk);
@@ -56,20 +57,29 @@ int update_section(matrix_chunk * m, int sens){
     return EXIT_SUCCESS;
 }
 
-
+/*
 void copy_buffer(matrix_chunk * m){
-    if(m->idY || m->idX){
+    *//*if(m->idY || m->idX){
         return;
-    }
+    }*//*
     int i,j;
-    for(i = 0; i < m->matrix2d->size; i++) {
-        for (j = 0; j < m->matrix2d->size; ++j) {
-            m->matrix2d->matrix[i][j] = m->matrix2d->buffer[i][j];
-            m->matrix2d->buffer[i][j] = 0 ;
+    for(i = 0; i < m->size; i++) {
+        for (j = 0; j < m->size; ++j) {
+            *//*m->matrix2d->matrix[i][j] = m->matrix2d->buffer[i][j];
+            m->matrix2d->buffer[i][j] = 0 ;*//*
+            m->matrix2d->matrix[m->size*m->idX+i][m->size*m->idY+j] = m->matrix2d->buffer[m->size*m->idX+i][m->size*m->idY+j];
+            m->matrix2d->buffer[m->size*m->idX+i][m->size*m->idY+j] = 0 ;
         }
     }
-}
+}*/
 
+void swap_matrix(matrix_chunk * m){
+    if(m->idY || m->idX)
+        return;
+    float ** temp = m->matrix2d->buffer;
+    m->matrix2d->buffer = m->matrix2d->matrix;
+    m->matrix2d->matrix = temp;
+}
 
 int end_thread(matrix_chunk * m){
     /*free(m->ov_left);

@@ -9,18 +9,19 @@
 #include "Matrix2D.h"
 #include "Physics.h"
 
-int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
-    m->size = size;
+int init_matrix_2d(int coeff, float max_temp_value, matrix_2d * m){
+    m->step = 1 << (coeff-4);
+    m->size = 1 << coeff;
     // middle is at size / 2
-    m->middle_index = size>>1;
+    m->middle_index = m->size>>1;
     // range/2 is size / 8
-    m->half_range = size>>4;
+    m->half_range = m->size>>4;
 
-    if (!(m->matrix = allocate_float_matrix(size))) {
+    if (!(m->matrix = allocate_float_matrix(m->size))) {
         return -1;
     }
 
-    if (!(m->buffer = allocate_float_matrix(size))) {
+    if (!(m->buffer = allocate_float_matrix(m->size))) {
         return -1;
     }
     // set max temp
@@ -96,10 +97,9 @@ int update_matrix(matrix_2d * m, int exec_number){
  * Only display the top left quarter of the matrix.
  */
 void print_matrix_2d_quarter(matrix_2d * m){
-    printf("Matrix : \n");
     int i,j;
-    for(j = 0; j < m->middle_index; j++){
-        for(i = 0; i < m->middle_index; i++){
+    for(j = 0; j < m->middle_index; j+=m->step){
+        for(i = 0; i < m->middle_index; i+= m->step){
             printf("%.2f\t\t",  m->matrix[i][j]);
         }
         printf("\n");

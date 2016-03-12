@@ -4,6 +4,7 @@
 
 #ifndef PROG_CONC_DIFF_MATRIX2D_H
 typedef struct {
+    int step;
     int size;
     float ** matrix;
     float ** buffer;

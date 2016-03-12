@@ -16,7 +16,7 @@ typedef struct {
 } matrix_chunk;
 
 
-extern pthread_barrier_t barrier_a,  barrier_b, barrier_c;
+extern pthread_barrier_t barrier_a,  barrier_b;
 
 void main_posix_thread(void * data);
 
@@ -24,7 +24,7 @@ matrix_chunk * init_chunk(matrix_chunk * m, int size, int number, int total_thre
 
 int update_section(matrix_chunk * m, int sens);
 
-void copy_buffer(matrix_chunk * m);
+void swap_matrix(matrix_chunk *m);
 
 int end_thread(matrix_chunk * m);
 
