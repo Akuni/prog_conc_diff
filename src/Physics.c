@@ -39,6 +39,22 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
     return 0;
 }
 
+int diffusion_2d_section(section* s, float coeff1, float coeff2, int sens) {
+    matrix_2d* m = s->matrix;
+    for (int i = s->startX; i < s->endX; ++i) {
+        for (int j = s->startY; j < s->endY; ++j) {
+            m->buffer[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
+        }
+    }
+
+    for (int i = s->startX; i < s->endX; ++i) {
+        for (int j = s->startY; j < s->endY; ++j) {
+            m->matrix[i][j] = m->buffer[i][j];
+        }
+    }
+    return 0;
+}
+
 float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens) {
     float right,left;
     if(sens){

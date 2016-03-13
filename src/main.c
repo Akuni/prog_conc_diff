@@ -17,8 +17,6 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    int exercise_number = 0;
-
     // execution statistics
     exec_stats stats;
 
@@ -29,6 +27,7 @@ int main(int argc, char **argv) {
         // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
         int problem_size = 1 << (p.problem_coeff_size);
         printf("problem size:%d\n", problem_size);
+        printf("nb thread :%d\n", 1 << p.thread_number*2);
 
         // init the 2D matrix
         matrix_2d matrix2d;
@@ -39,12 +38,15 @@ int main(int argc, char **argv) {
         }
 
         // start process of diffusion
-        switch(exercise_number){
+        switch(p.exercise_number){
             case 0:
                 // no thread
-                stats = runIterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user, p.execution_number);
+                stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user,
+                                      p.execution_number);
                 break;
             case 1: // with thread posix
+                run_thread(&matrix2d, &p);
+                break;
             case 2: // with thread variable
             case 3: // with thread mutex
             case 4: // with OpenCL CPU

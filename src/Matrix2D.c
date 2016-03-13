@@ -93,6 +93,15 @@ int update_matrix(matrix_2d * m, int exec_number){
     return 0;
 }
 
+int update_section(section* s, int exec_number) {
+    for (int i = 0; i < exec_number; ++i) {
+        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
+        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
+        set_middle_to_max_temp(s->matrix);
+    }
+    return 0;
+}
+
 /**
  * Only display the top left quarter of the matrix.
  */

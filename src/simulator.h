@@ -30,9 +30,13 @@ typedef struct {
     int exercise_number;
 } sim_parameters;
 
-exec_stats run(matrix_2d *, int measure_cpu, int measure_usr, int execution_number);
+exec_stats run_iterative_once(matrix_2d *, int measure_cpu, int measure_usr, int execution_number);
 
-exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number);
+exec_stats run_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p);
+
+void run_thread_once(matrix_2d *matrix2d, sim_parameters *p);
 
 void init_stats(exec_stats * stats);
 

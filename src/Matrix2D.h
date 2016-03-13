@@ -6,13 +6,17 @@
 #ifndef PROG_CONC_DIFF_MATRIX2D_H
 typedef struct {
     int size;
-    float ** matrix;
-    float ** buffer;
+    float** matrix;
+    float** buffer;
     int middle_index;
     int half_range;
     float max_temp_value;
 } matrix_2d;
 
+typedef struct {
+    int startX, startY, endX, endY;
+    matrix_2d* matrix;
+} section;
 
 
 int init_matrix_2d(int, float, matrix_2d *);
@@ -28,6 +32,8 @@ void print_matrix_2d(matrix_2d *);
 void print_matrix_2d_quarter(matrix_2d *);
 
 int update_matrix(matrix_2d *, int);
+
+int update_section(section* s, int exec_number);
 
 void set_middle_to_max_temp(matrix_2d * m);
 
