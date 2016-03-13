@@ -80,13 +80,12 @@ void run_thread_once(matrix_2d *matrix2d, sim_parameters *p) {
     printf("Nb sec per size=> %d\n", nb_sec_side);
 
     section s = {0, 0, size_section, size_section, matrix2d};
-    //update_section(&s, p->execution_number);
 
     pthread_barrier_t section_barrier, thread_barrier;
 
     pthread_barrier_init(&section_barrier, NULL, nb_thread);
     pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
-    // là on va découper en section. Puis on va lancer les threads et les attendre.
+
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
             pthread_t t;
@@ -110,7 +109,6 @@ void run_thread_once(matrix_2d *matrix2d, sim_parameters *p) {
         }
     }
     pthread_barrier_wait(&thread_barrier);
-
 }
 
 /**

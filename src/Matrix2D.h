@@ -37,8 +37,6 @@ void print_matrix_2d_quarter(matrix_2d *);
 
 int update_matrix(matrix_2d *, int);
 
-int update_section(section* s, int exec_number);
-
 void* diffusion_thread(void* args);
 
 void set_middle_to_max_temp(matrix_2d * m);

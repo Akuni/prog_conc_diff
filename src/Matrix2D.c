@@ -98,14 +98,6 @@ int update_matrix(matrix_2d * m, int exec_number){
     return 0;
 }
 
-int update_section(section* s, int exec_number) {
-    matrix_2d* m = s->matrix;
-    for (int i = 0; i < exec_number; ++i) {
-        // run the threads
-    }
-    return 0;
-}
-
 void copy_from_buffer(matrix_2d* m) {
     for (int i = 0; i < m->size; ++i) {
         for (int j = 0; j < m->size; ++j) {
