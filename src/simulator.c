@@ -5,6 +5,7 @@
 
 #include <time.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "Matrix2D.h"
 #include "simulator.h"
 
@@ -73,26 +74,42 @@ exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p) {
  */
 void run_thread_once(matrix_2d *matrix2d, sim_parameters *p) {
     int nb_sec_side = 1 << p->thread_number;
+    int nb_thread = 1 << (p->thread_number*2);
     int size_section = matrix2d->size / nb_sec_side;
     printf("Size section => %d\n", size_section);
     printf("Nb sec per size=> %d\n", nb_sec_side);
 
     section s = {0, 0, size_section, size_section, matrix2d};
-    update_section(&s, p->execution_number);
-/*
+    //update_section(&s, p->execution_number);
+
+    pthread_barrier_t section_barrier, thread_barrier;
+
+    pthread_barrier_init(&section_barrier, NULL, nb_thread);
+    pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
+    // là on va découper en section. Puis on va lancer les threads et les attendre.
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
-            section s;
-            s.matrix = matrix2d;
-            s.startX = j * size_section;
-            s.startY = i * size_section;
-            s.endX = s.startX + size_section;
-            s.endY = s.startY + size_section;
-            update_section(&s, p->execution_number);
+            pthread_t t;
+            section* s;
+
+            if ((s = malloc(sizeof(section))) == NULL) {
+                exit(EXIT_FAILURE);
+            }
+
+            s->matrix = matrix2d;
+            s->startX = j * size_section;
+            s->startY = i * size_section;
+            s->endX = s->startX + size_section;
+            s->endY = s->startY + size_section;
+            s->section_barrier = &section_barrier;
+            s->thread_barrier = &thread_barrier;
+            s->nb_exec = p->execution_number;
+
+            printf("Section : startX %d, startY %d\n", s->startX, s->startY);
+            pthread_create(&t, NULL, &diffusion_thread, s);
         }
     }
-*/
-
+    pthread_barrier_wait(&thread_barrier);
 
 }
 

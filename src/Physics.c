@@ -47,11 +47,7 @@ int diffusion_2d_section(section* s, float coeff1, float coeff2, int sens) {
         }
     }
 
-    for (int i = s->startX; i < s->endX; ++i) {
-        for (int j = s->startY; j < s->endY; ++j) {
-            m->matrix[i][j] = m->buffer[i][j];
-        }
-    }
+
     return 0;
 }
 

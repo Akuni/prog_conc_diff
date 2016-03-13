@@ -1,4 +1,4 @@
-GCC = gcc -Wall -std=c99
+GCC = gcc -Wall -std=c99 -pthread
 SRC = -l src
 
 prog: bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o

@@ -6,9 +6,14 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "Matrix2D.h"
 #include "Physics.h"
+
+typedef struct {
+
+} thread_args;
 
 int init_matrix_2d(int size, float max_temp_value, matrix_2d * m){
     m->size = size;
@@ -94,12 +99,44 @@ int update_matrix(matrix_2d * m, int exec_number){
 }
 
 int update_section(section* s, int exec_number) {
+    matrix_2d* m = s->matrix;
     for (int i = 0; i < exec_number; ++i) {
-        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
-        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
-        set_middle_to_max_temp(s->matrix);
+        // run the threads
     }
     return 0;
+}
+
+void copy_from_buffer(matrix_2d* m) {
+    for (int i = 0; i < m->size; ++i) {
+        for (int j = 0; j < m->size; ++j) {
+            m->matrix[i][j] = m->buffer[i][j];
+        }
+    }
+}
+
+void* diffusion_thread(void* args) {
+    section* s = (section*) args;
+    matrix_2d *m = s->matrix;
+    for(unsigned i = 0; i < s->nb_exec; ++i) {
+        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
+        if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+            // Copy the matrix
+            copy_from_buffer(m);
+        }
+
+        pthread_barrier_wait(s->section_barrier);
+
+        diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
+
+        if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+            // Copy the matrix
+            copy_from_buffer(m);
+            set_middle_to_max_temp(m);
+        }
+        pthread_barrier_wait(s->section_barrier);
+    }
+    pthread_barrier_wait(s->thread_barrier);
+    free(s);
 }
 
 /**

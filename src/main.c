@@ -5,18 +5,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "Physics.h"
 #include "simulator.h"
+
 struct rusage;
 
 int main(int argc, char **argv) {
-
     sim_parameters p;
     if (!(set_sim_parameters(argc, argv, &p))) {
         exit(EXIT_FAILURE);
     }
-
     // execution statistics
     exec_stats stats;
 
@@ -39,10 +37,8 @@ int main(int argc, char **argv) {
 
         // start process of diffusion
         switch(p.exercise_number){
-            case 0:
-                // no thread
-                stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user,
-                                      p.execution_number);
+            case 0: // no thread
+                stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user, p.execution_number);
                 break;
             case 1: // with thread posix
                 run_thread(&matrix2d, &p);
