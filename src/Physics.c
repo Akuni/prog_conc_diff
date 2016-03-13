@@ -12,23 +12,6 @@ float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
 
 float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens);
 
-int diffusion(matrix_representation * m, float coeff1, float coeff2){
-    matrix_representation result;
-    init_matrix(m->size, m->middle_index, &result);
-
-    // run through matrix
-    int i;
-    for(i = 0; i < m->size; i++){
-        result.matrix[i] = calculus(m, i, coeff1, coeff2);
-    }
-
-    // copy results
-    for(i = 0; i < m->size; i++){
-        m->matrix[i] = result.matrix[i];
-    }
-
-    return 0;
-}
 
 float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
     int ipp = i+1;
@@ -39,13 +22,9 @@ float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
 }
 
 int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
-
-    reset_buffer(m);
-
     // run through matrix
     int i,j;
     for(i = 0; i < m->size; i++){
-        if(!m->matrix[m->middle_index][i]) continue;
         for(j = 0; j < m->size; j++){
             m->buffer[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
         }
