@@ -1,14 +1,11 @@
-GCC = gcc -Wall -std=c99 -pthread
+GCC = gcc -Wall -std=gnu99 -pthread
 SRC = -l src
 
-prog: bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o
-	$(GCC)  bin/main.o bin/Matrix.o bin/Matrix2D.o bin/Physics.o bin/simulator.o -o bin/prog
+prog: bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o
+	$(GCC)  bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o -o bin/prog
 
 bin/main.o: src/main.c
 	$(GCC) -c src/main.c -o bin/main.o $(SRC)
-
-bin/Matrix.o: src/Matrix.c src/Matrix.h
-	$(GCC) -c src/Matrix.c -o bin/Matrix.o $(SRC)
 
 bin/Matrix2D.o: src/Matrix2D.c src/Matrix2D.h
 	$(GCC) -c src/Matrix2D.c -o bin/Matrix2D.o $(SRC)
