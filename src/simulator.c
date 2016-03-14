@@ -166,9 +166,14 @@ int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
                 break;
             case 'e':
                 // e => exercise's number (1 to 5)
-                p->exercise_number = atoi(optarg);
-                if(p->exercise_number < 0) p->exercise_number = 0;
-                if(p->exercise_number > 5) p->exercise_number = 5;
+                p->nb_exec = strlen(optarg);
+                if ((p->array_exec = malloc(p->nb_exec * sizeof(int))) == NULL) return 0; /*error*/
+                for (int i = 0; i < p->nb_exec; ++i) {
+                    c = optarg[i];
+                    p->array_exec[i] = atoi(&c);
+                    if(p->array_exec[i] < 0)  p->array_exec[i] = 0;
+                    if(p->array_exec[i] > 5)  p->array_exec[i] = 5;
+                }
                 break;
             default:
                 /* '?' */

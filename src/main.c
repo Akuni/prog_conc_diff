@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
     // execution statistics
     exec_stats stats;
 
+    for (int exo = 0; exo < p.nb_exec; ++exo)
     for (int thread = 0; thread < p.nb_thread_nb; ++thread)
     for (int i = 0; i < p.nb_sizes; ++i) {
         p.problem_coeff_size = p.array_problem_coeff_size[i];
@@ -25,8 +26,9 @@ int main(int argc, char **argv) {
         p.problem_coeff_size += 4;
         // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
         int problem_size = 1 << (p.problem_coeff_size);
+        printf("exercise:%d\n", exo);
         printf("problem size:%d\n", problem_size);
-        printf("nb thread :%d\n", 1 << p.array_thread_nb[thread]*2);
+        if (exo != 0) printf("nb thread :%d\n", 1 << p.array_thread_nb[thread]*2);
 
         // init the 2D matrix
         matrix_2d matrix2d;
@@ -37,7 +39,7 @@ int main(int argc, char **argv) {
         }
 
         // start process of diffusion
-        switch(p.exercise_number){
+        switch(p.array_exec[exo]){
             case 0: // no thread
                 //stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user, p.execution_number);
                 stats = run_thread(&matrix2d, &p, 1);

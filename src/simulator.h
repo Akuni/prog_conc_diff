@@ -20,8 +20,8 @@ typedef struct {
 
 typedef struct {
     // different problem size to be executed
-    int *array_problem_coeff_size, *array_thread_nb;
-    int nb_sizes, nb_thread_nb;
+    int *array_problem_coeff_size, *array_thread_nb, *array_exec;
+    int nb_sizes, nb_thread_nb, nb_exec;
     // various numbers : thread number, number of execution, the size of the problem
     int /*thread_number,*/ execution_number, problem_coeff_size;
     // various flags : flag to display only quarter, flag  to display executing time
