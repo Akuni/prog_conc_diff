@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         p.problem_coeff_size += 4;
         // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
         int problem_size = 1 << (p.problem_coeff_size);
-        printf("exercise:%d\n", exo);
+        printf("exercise:%d\n", p.array_exec[exo]);
         printf("problem size:%d\n", problem_size);
         if (exo != 0) printf("nb thread :%d\n", 1 << p.array_thread_nb[thread]*2);
 
