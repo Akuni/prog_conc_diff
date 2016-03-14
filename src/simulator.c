@@ -11,44 +11,6 @@
 
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
-/**
- * Run the simulation once
- * If execution stats are ordered, return them.
- */
-exec_stats run_iterative_once(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
-    exec_stats stats; init_stats(&stats);
-    // if -m, start chrono
-    clock_t clockBegin = 0;time_t timeBegin = 0;
-    if (measure_cpu) clockBegin = clock();
-    if (measure_usr) timeBegin = time(NULL);
-
-    // init the 2D matrix
-    reset_matrix(matrix2d);
-    update_matrix(matrix2d, execution_number);
-
-    // if -m, stop the chrono
-    if (measure_cpu) stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
-    if (measure_usr) stats.execution_time_user = time(NULL) - timeBegin;
-    return stats;
-}
-
-/**
- * Run the simulation once or several times depending on whether we need stats or not.
- */
-exec_stats run_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
-    exec_stats stats_array[NB_ITERATION];
-    int flag_must_make_average = measure_cpu || measure_usr;
-    int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
-
-    for (unsigned i = 0; i < nb_iteration; ++i) {
-        stats_array[i] = run_iterative_once(matrix2d, measure_cpu, measure_usr, execution_number);
-    }
-
-    exec_stats stats = compute_average(stats_array, nb_iteration);
-
-    return stats;
-}
-
 exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p, int thread_number) {
     exec_stats stats_array[NB_ITERATION];
     int flag_must_make_average = p->flag_execution_time_cpu || p->flag_execution_time_user;
@@ -155,6 +117,7 @@ void print_stats(exec_stats * stats) {
 int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
     p->flag_execution_time_user = p->flag_execution_time_cpu = 0;
     p->flag_quarter = 0;
+    p->execution_number = 1000;
     // index to get args
     int opt = 0;
     while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {

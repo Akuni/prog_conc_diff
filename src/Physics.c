@@ -5,21 +5,8 @@
 
 #include "Physics.h"
 #include "Matrix2D.h"
-#include "Matrix.h"
-
-
-float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
 
 float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens);
-
-
-float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
-    int ipp = i+1;
-    int imm = i-1;
-    float left = 0 <= imm && imm < m->size ? m->matrix[imm] : 0;
-    float right = 0 <= ipp && ipp < m->size ? m->matrix[ipp] : 0;
-    return  m->matrix[i] * coeff1 + coeff2 *(left + right);
-}
 
 int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
     // run through matrix
