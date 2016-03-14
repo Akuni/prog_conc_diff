@@ -60,11 +60,11 @@ exec_stats run_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, 
     return stats;
 }
 
-exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p) {
+exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p, int thread_number) {
     exec_stats stats;
     init_stats(&stats);
 
-    run_thread_once(matrix2d, p);
+    run_thread_once(matrix2d, p, thread_number);
 
     return stats;
 }
@@ -72,12 +72,10 @@ exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p) {
 /**
  * Run the diffusion for each division
  */
-void run_thread_once(matrix_2d *matrix2d, sim_parameters *p) {
-    int nb_sec_side = 1 << p->thread_number;
-    int nb_thread = 1 << (p->thread_number*2);
+void run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_number) {
+    int nb_sec_side = 1 << thread_number;
+    int nb_thread = 1 << (thread_number*2);
     int size_section = matrix2d->size / nb_sec_side;
-    printf("Size section => %d\n", size_section);
-    printf("Nb sec per size=> %d\n", nb_sec_side);
 
     section s = {0, 0, size_section, size_section, matrix2d};
 
@@ -104,7 +102,6 @@ void run_thread_once(matrix_2d *matrix2d, sim_parameters *p) {
             s->thread_barrier = &thread_barrier;
             s->nb_exec = p->execution_number;
 
-            printf("Section : startX %d, startY %d\n", s->startX, s->startY);
             pthread_create(&t, NULL, &diffusion_thread, s);
         }
     }
