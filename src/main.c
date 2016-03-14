@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
         int problem_size = 1 << (p.problem_coeff_size);
         printf("exercise:%d\n", p.array_exec[exo]);
         printf("problem size:%d\n", problem_size);
-        if (exo != 0) printf("nb thread :%d\n", 1 << p.array_thread_nb[thread]*2);
+        if (p.array_exec[exo] != 0) printf("nb thread :%d\n", 1 << p.array_thread_nb[thread]*2);
 
         // init the 2D matrix
         matrix_2d matrix2d;
