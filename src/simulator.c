@@ -153,6 +153,8 @@ void print_stats(exec_stats * stats) {
 }
 
 int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
+    p->flag_execution_time_user = p->flag_execution_time_cpu = 0;
+    p->flag_quarter = 0;
     // index to get args
     int opt = 0;
     while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {
@@ -160,7 +162,16 @@ int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
         switch (opt) {
             case 't':
                 // t => number of thread
-                p->thread_number = atoi(optarg);
+                p->nb_thread_nb = strlen(optarg);
+                if ((p->array_thread_nb = malloc(p->nb_sizes * sizeof(int))) == NULL) return 0; /*error*/
+
+                for (int i = 0; i < p->nb_thread_nb; ++i) {
+                    c = optarg[i];
+                    p->array_thread_nb[i] = atoi(&c);
+                    if(p->array_thread_nb[i] < 0)  p->array_thread_nb[i] = 0;
+                    if(p->array_thread_nb[i] > 5)  p->array_thread_nb[i] = 5;
+                }
+                //p->thread_number = atoi(optarg);
                 break;
             case 'a':
                 // a => display quarter of the matrix
@@ -189,7 +200,6 @@ int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
                     if(p->array_problem_coeff_size[i] > 9)  p->array_problem_coeff_size[i] = 9;
                 }
 
-
                 break;
             case 'e':
                 // e => exercise's number (1 to 5)
@@ -210,4 +220,5 @@ int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
 
 void free_sim_parameters(sim_parameters *p) {
     free(p->array_problem_coeff_size);
+    free(p->array_thread_nb);
 }

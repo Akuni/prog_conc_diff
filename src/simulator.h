@@ -11,7 +11,7 @@
 #ifndef PROG_CONC_DIFF_SIMULATOR_H
 #define PROG_CONC_DIFF_SIMULATOR_H
 
-#define NB_ITERATION 1
+#define NB_ITERATION 5
 
 typedef struct {
     double execution_time_cpu;
@@ -21,9 +21,9 @@ typedef struct {
 typedef struct {
     // different problem size to be executed
     int *array_problem_coeff_size, *array_thread_nb;
-    int nb_sizes, nb_threads;
+    int nb_sizes, nb_thread_nb;
     // various numbers : thread number, number of execution, the size of the problem
-    int thread_number, execution_number, problem_coeff_size;
+    int /*thread_number,*/ execution_number, problem_coeff_size;
     // various flags : flag to display only quarter, flag  to display executing time
     int flag_quarter, flag_execution_time_cpu, flag_execution_time_user;
     // the exercise number
