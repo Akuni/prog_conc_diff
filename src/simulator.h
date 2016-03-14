@@ -11,7 +11,7 @@
 #ifndef PROG_CONC_DIFF_SIMULATOR_H
 #define PROG_CONC_DIFF_SIMULATOR_H
 
-#define NB_ITERATION 10
+#define NB_ITERATION 1
 
 typedef struct {
     double execution_time_cpu;
@@ -20,8 +20,8 @@ typedef struct {
 
 typedef struct {
     // different problem size to be executed
-    int *array_problem_coeff_size;
-    int nb_sizes;
+    int *array_problem_coeff_size, *array_thread_nb;
+    int nb_sizes, nb_threads;
     // various numbers : thread number, number of execution, the size of the problem
     int thread_number, execution_number, problem_coeff_size;
     // various flags : flag to display only quarter, flag  to display executing time
@@ -36,7 +36,7 @@ exec_stats run_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, 
 
 exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p, int thread_number);
 
-void run_thread_once(matrix_2d *matrix2d, sim_parameters *p, int thread_number);
+exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters *p, int thread_number);
 
 void init_stats(exec_stats * stats);
 

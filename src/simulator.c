@@ -16,30 +16,19 @@ exec_stats compute_average(exec_stats stats_array[10], int array_length);
  * If execution stats are ordered, return them.
  */
 exec_stats run_iterative_once(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number) {
-    exec_stats stats;
-    init_stats(&stats);
-
+    exec_stats stats; init_stats(&stats);
     // if -m, start chrono
-    clock_t clockBegin = 0;
-    time_t timeBegin = 0;
-    if (measure_cpu) {
-        clockBegin = clock();
-    }
-    if (measure_usr) {
-        timeBegin = time(NULL);
-    }
+    clock_t clockBegin = 0;time_t timeBegin = 0;
+    if (measure_cpu) clockBegin = clock();
+    if (measure_usr) timeBegin = time(NULL);
 
     // init the 2D matrix
     reset_matrix(matrix2d);
     update_matrix(matrix2d, execution_number);
 
     // if -m, stop the chrono
-    if (measure_cpu) {
-        stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
-    }
-    if (measure_usr) {
-        stats.execution_time_user = time(NULL) - timeBegin;
-    }
+    if (measure_cpu) stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
+    if (measure_usr) stats.execution_time_user = time(NULL) - timeBegin;
     return stats;
 }
 
@@ -61,35 +50,47 @@ exec_stats run_iterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, 
 }
 
 exec_stats run_thread(matrix_2d *matrix2d, sim_parameters *p, int thread_number) {
-    exec_stats stats;
-    init_stats(&stats);
+    exec_stats stats_array[NB_ITERATION];
+    int flag_must_make_average = p->flag_execution_time_cpu || p->flag_execution_time_user;
+    int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
 
-    run_thread_once(matrix2d, p, thread_number);
+    for (unsigned iter = 0; iter < nb_iteration; ++iter) {
+        stats_array[iter] = run_thread_once(matrix2d, p, thread_number);
+    }
 
+    exec_stats stats = compute_average(stats_array, nb_iteration);
     return stats;
 }
 
 /**
  * Run the diffusion for each division
  */
-void run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_number) {
+exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_number) {
+    exec_stats stats; init_stats(&stats);
+    // if -m, start chrono
+    clock_t clockBegin = 0;time_t timeBegin = 0;
+    if (p->flag_execution_time_cpu) clockBegin = clock();
+    if (p->flag_execution_time_user) timeBegin = time(NULL);
+
+    // init the 2D matrix
+    reset_matrix(matrix2d);
+
+    // Compute info thread
     int nb_sec_side = 1 << thread_number;
     int nb_thread = 1 << (thread_number*2);
     int size_section = matrix2d->size / nb_sec_side;
-
-    section s = {0, 0, size_section, size_section, matrix2d};
 
     pthread_barrier_t section_barrier, thread_barrier;
 
     pthread_barrier_init(&section_barrier, NULL, nb_thread);
     pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
-
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
             pthread_t t;
             section* s;
 
             if ((s = malloc(sizeof(section))) == NULL) {
+                perror("Couldn't malloc for a new Section\n");
                 exit(EXIT_FAILURE);
             }
 
@@ -106,6 +107,15 @@ void run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_number) 
         }
     }
     pthread_barrier_wait(&thread_barrier);
+
+    pthread_barrier_destroy(&section_barrier);
+    pthread_barrier_destroy(&thread_barrier);
+
+    // if -m, stop the chrono
+    if (p->flag_execution_time_cpu) stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
+    if (p->flag_execution_time_user) stats.execution_time_user = time(NULL) - timeBegin;
+
+    return stats;
 }
 
 /**
@@ -114,7 +124,7 @@ void run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_number) 
 exec_stats compute_average(exec_stats stats_array[], int array_length) {
     exec_stats stats;
     // If we don't have enough stats to ignore the first and the last, we chose the first value
-    if (1 < array_length && array_length < 3) {
+    if (1 <= array_length && array_length < 3) {
         stats = stats_array[0];
     } else {
         // If we have enough data to compute an average

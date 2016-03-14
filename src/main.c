@@ -38,11 +38,11 @@ int main(int argc, char **argv) {
         // start process of diffusion
         switch(p.exercise_number){
             case 0: // no thread
-                stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user, p.execution_number);
-                //run_thread(&matrix2d, &p, 1);
+                //stats = run_iterative(&matrix2d, p.flag_execution_time_cpu, p.flag_execution_time_user, p.execution_number);
+                stats = run_thread(&matrix2d, &p, 1);
                 break;
             case 1: // with thread posix
-                run_thread(&matrix2d, &p, p.thread_number);
+                stats = run_thread(&matrix2d, &p, p.thread_number);
                 break;
             case 2: // with thread variable
             case 3: // with thread mutex
