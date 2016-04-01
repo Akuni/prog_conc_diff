@@ -9,7 +9,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "Matrix2D.h"
-#include "simulator.h"
+#include "Simulator.h"
 #include "Thread.h"
 
 pthread_barrier_t   barrier_a,  barrier_b;
@@ -164,7 +164,6 @@ exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu
     }
 
     for(int i = 0; i < thread_total ;  i++){
-        // TODO TESTER MALLOC
         array_chunk[i] = malloc(sizeof(matrix_chunk));
         if(array_chunk[i] == NULL){
             fprintf(stderr, "error: Cannot create chunk # %d\n", i);
