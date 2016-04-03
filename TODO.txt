@@ -1,0 +1,4 @@
+// Ne pas copier le tableau entre les deux diffusions
+// Réduire le nombre de barrière
+// Faire une méthode qui choisit quelle barrière utiliser et qui renvoie 0 dans tous les cas
+//  sauf une seule fois où elle renvoie PTHREAD_BARRIER_SERIAL_THREAD

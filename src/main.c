@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "Physics.h"
 #include "simulator.h"
+#include "BarrierManager.h"
 
 struct rusage;
 
@@ -45,6 +46,7 @@ int main(int argc, char **argv) {
                 stats = run_thread(&matrix2d, &p, 1);
                 break;
             case 1: // with thread posix
+                choice = posix;
                 stats = run_thread(&matrix2d, &p, p.array_thread_nb[thread]);
                 break;
             case 2: // with thread variable

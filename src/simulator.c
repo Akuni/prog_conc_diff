@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include "Matrix2D.h"
 #include "simulator.h"
+#include "BarrierManager.h"
 
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
@@ -44,7 +45,9 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
 
     pthread_barrier_t section_barrier, thread_barrier;
 
-    pthread_barrier_init(&section_barrier, NULL, nb_thread);
+    //pthread_barrier_init(&section_barrier, NULL, nb_thread);
+    init_barrier(nb_thread);
+    // TODO here init with manager
     pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
@@ -70,7 +73,10 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
     }
     pthread_barrier_wait(&thread_barrier);
 
-    pthread_barrier_destroy(&section_barrier);
+    // TODO here destroy with manager
+
+    //pthread_barrier_destroy(&section_barrier);
+    destroy_barrier();
     pthread_barrier_destroy(&thread_barrier);
 
     // if -m, stop the chrono

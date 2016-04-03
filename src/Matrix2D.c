@@ -10,6 +10,7 @@
 
 #include "Matrix2D.h"
 #include "Physics.h"
+#include "BarrierManager.h"
 
 typedef struct {
 
@@ -58,7 +59,6 @@ void reset_buffer(matrix_2d * m) {
         }
     }
 }
-
 
 void reset_matrix(matrix_2d *m) {
     for (unsigned i = 0; i < m->size; ++i) {
@@ -111,21 +111,23 @@ void* diffusion_thread(void* args) {
     matrix_2d *m = s->matrix;
     for(unsigned i = 0; i < s->nb_exec; ++i) {
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
-        if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+        // TODO wait with manager
+        //if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+        if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
             // Copy the matrix
             copy_from_buffer(m);
         }
 
-        pthread_barrier_wait(s->section_barrier);
+        wait_barrier();
 
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
 
-        if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+        if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
             // Copy the matrix
             copy_from_buffer(m);
             set_middle_to_max_temp(m);
         }
-        pthread_barrier_wait(s->section_barrier);
+        wait_barrier();
     }
     pthread_barrier_wait(s->thread_barrier);
     free(s);
