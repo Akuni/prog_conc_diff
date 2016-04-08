@@ -3,8 +3,6 @@
 //
 
 #include "BarrierCond.h"
-#include <stdio.h>
-#include <pthread.h>
 
 void barrier_cond_init(BarrierCond* barrier, int counter) {
     barrier->remain = counter;
@@ -14,29 +12,27 @@ void barrier_cond_init(BarrierCond* barrier, int counter) {
 }
 
 int barrier_cond_wait(BarrierCond* barrier) {
-
-    // On récupère le mutex (pour le compteur)
+    int returnValue = 0;
+    // Protection of the counter
     pthread_mutex_lock(&(barrier->mutex));
-    // On décrémente le compteur de threads restant et on le compare à 0
+    // The counter of remaining threads allowed is decremented
     if(--(barrier->remain) == 0) {
-        // Reinitialisation du compteur
+        // The counter is reset
         barrier->remain = barrier->threadsAwaiting;
-        // On notifie tout le monde que le dernier est arrivé
+        // Notify all
         pthread_cond_broadcast(&(barrier->cond));
-        // On débloque le mutex du compteur
-        pthread_mutex_unlock(&(barrier->mutex));
 
-        return PTHREAD_BARRIER_SERIAL_THREAD;
+        // Set the return so the caller will know that it's the last thread to call the barrier
+        returnValue = PTHREAD_BARRIER_SERIAL_THREAD;
     } else {
 
         if (barrier->remain != 0) {
             pthread_cond_wait(&(barrier->cond),&(barrier->mutex));
         }
-        pthread_mutex_unlock(&(barrier->mutex));
-        return 0;
-
     }
-    return 0;
+    // The mutex is unlocked
+    pthread_mutex_unlock(&(barrier->mutex));
+    return returnValue;
 }
 
 void barrier_cond_destroy(BarrierCond *barrier) {
