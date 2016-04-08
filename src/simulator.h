@@ -11,7 +11,7 @@
 #ifndef PROG_CONC_DIFF_SIMULATOR_H
 #define PROG_CONC_DIFF_SIMULATOR_H
 
-#define NB_ITERATION 5
+#define NB_ITERATION 1
 
 typedef struct {
     double execution_time_cpu;
