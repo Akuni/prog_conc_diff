@@ -42,14 +42,20 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
     int nb_sec_side = 1 << thread_number;
     int nb_thread = 1 << (thread_number*2);
     int size_section = matrix2d->size / nb_sec_side;
-
-    pthread_barrier_t thread_barrier;
+    pthread_t** threads;
+    if ((threads = malloc(nb_thread * sizeof(pthread_t*))) == NULL) {
+        perror("Couldn't allocate to store threads");
+        exit(EXIT_FAILURE);
+    }
 
     init_barrier(nb_thread);
-    pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
-            pthread_t t;
+            pthread_t* t;
+            if ((t = malloc(sizeof(pthread_t))) == NULL) {
+                perror("Couldn't allocate space for new thread");
+                exit(EXIT_FAILURE);
+            }
             section* s;
 
             if ((s = malloc(sizeof(section))) == NULL) {
@@ -62,16 +68,24 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
             s->startY = i * size_section;
             s->endX = s->startX + size_section;
             s->endY = s->startY + size_section;
-            s->thread_barrier = &thread_barrier;
             s->nb_exec = p->execution_number;
 
-            pthread_create(&t, NULL, &diffusion_thread, s);
+            pthread_create(t, NULL, &diffusion_thread, s);
+            threads[i * nb_sec_side + j] = t;
         }
     }
-    pthread_barrier_wait(&thread_barrier);
+
+    for (int i = 0; i < nb_thread; ++i) {
+        pthread_join(*threads[i], NULL);
+    }
 
     destroy_barrier();
-    pthread_barrier_destroy(&thread_barrier);
+
+    // Free the threads
+    for (int i = 0; i < nb_thread; ++i) {
+        free(threads[i]);
+    }
+    free(threads);
 
     // if -m, stop the chrono
     if (p->flag_execution_time_cpu) stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;

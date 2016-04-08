@@ -17,7 +17,6 @@ typedef struct {
 typedef struct {
     int startX, startY, endX, endY;
     matrix_2d* matrix;
-    pthread_barrier_t* thread_barrier;
     int nb_exec;
 } section;
 

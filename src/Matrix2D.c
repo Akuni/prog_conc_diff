@@ -129,7 +129,6 @@ void* diffusion_thread(void* args) {
         }
         wait_barrier();
     }
-    pthread_barrier_wait(s->thread_barrier);
     free(s);
 }
 
