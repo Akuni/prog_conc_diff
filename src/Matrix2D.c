@@ -112,15 +112,16 @@ void* diffusion_thread(void* args) {
     for(unsigned i = 0; i < s->nb_exec; ++i) {
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
 
+        // The last thread will swap the buffer
         if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
             // Swap the matrix and the buffer
             swapBuffer(m);
         }
-
         wait_barrier();
 
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
 
+        // The last thread will swap the buffer and the matrix and reheat the center
         if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
             // Swap the matrix and the buffer
             swapBuffer(m);
