@@ -16,13 +16,7 @@ int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
             m->buffer[i][j] = calculus_2d(m, i, j, coeff1, coeff2, sens);
         }
     }
-
-    /* Copy from buffer */
-    for(i = 0; i < m->size; i++){
-        for(j = 0; j < m->size; ++j) {
-            m->matrix[i][j] = m->buffer[i][j];
-        }
-    }
+    swapBuffer(m);
     return 0;
 }
 

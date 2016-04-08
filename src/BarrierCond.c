@@ -25,10 +25,7 @@ int barrier_cond_wait(BarrierCond* barrier) {
         // Set the return so the caller will know that it's the last thread to call the barrier
         returnValue = PTHREAD_BARRIER_SERIAL_THREAD;
     } else {
-
-        if (barrier->remain != 0) {
-            pthread_cond_wait(&(barrier->cond),&(barrier->mutex));
-        }
+        pthread_cond_wait(&(barrier->cond),&(barrier->mutex));
     }
     // The mutex is unlocked
     pthread_mutex_unlock(&(barrier->mutex));

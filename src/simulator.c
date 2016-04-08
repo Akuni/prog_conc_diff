@@ -132,6 +132,7 @@ int set_sim_parameters(int argc, char **argv, sim_parameters* p) {
     p->flag_execution_time_user = p->flag_execution_time_cpu = 0;
     p->flag_quarter = 0;
     p->execution_number = 1000;
+    p->nb_thread_nb = 0;
     // index to get args
     int opt = 0;
     while ((opt = getopt(argc, argv, "t:amMi:s:e:")) != -1) {
