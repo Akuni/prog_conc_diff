@@ -16,7 +16,7 @@ void init_barrier(int nb_thread){
             pthread_barrier_init(&section_barrier, NULL, nb_thread);
             break;
         case custom_cond:
-            barrier_cond_init(&section_barrier, nb_thread);
+            barrier_cond_init(&section_barrier_cond, nb_thread);
             break;
         default:
             break;
@@ -29,9 +29,10 @@ int wait_barrier() {
             return pthread_barrier_wait(&section_barrier);
             break;
         case custom_cond:
-            barrier_cond_wait(&section_barrier);
+            return barrier_cond_wait(&section_barrier_cond);
             break;
         default:
+            return 0;
             break;
     }
 }
@@ -42,7 +43,7 @@ void destroy_barrier() {
             pthread_barrier_destroy(&section_barrier);
             break;
         case custom_cond:
-            barrier_cond_destroy(&section_barrier);
+            barrier_cond_destroy(&section_barrier_cond);
             break;
         default:
             break;
