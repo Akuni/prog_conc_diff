@@ -45,9 +45,7 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
 
     pthread_barrier_t section_barrier, thread_barrier;
 
-    //pthread_barrier_init(&section_barrier, NULL, nb_thread);
     init_barrier(nb_thread);
-    // TODO here init with manager
     pthread_barrier_init(&thread_barrier, NULL, nb_thread+1);
     for(unsigned i = 0; i < nb_sec_side; ++i) {
         for(unsigned j = 0; j < nb_sec_side; ++j) {
@@ -64,7 +62,6 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
             s->startY = i * size_section;
             s->endX = s->startX + size_section;
             s->endY = s->startY + size_section;
-            s->section_barrier = &section_barrier;
             s->thread_barrier = &thread_barrier;
             s->nb_exec = p->execution_number;
 
@@ -74,8 +71,6 @@ exec_stats run_thread_once(matrix_2d *matrix2d, sim_parameters* p, int thread_nu
     pthread_barrier_wait(&thread_barrier);
 
     // TODO here destroy with manager
-
-    //pthread_barrier_destroy(&section_barrier);
     destroy_barrier();
     pthread_barrier_destroy(&thread_barrier);
 
