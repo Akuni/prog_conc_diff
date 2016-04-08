@@ -111,11 +111,10 @@ void* diffusion_thread(void* args) {
     matrix_2d *m = s->matrix;
     for(unsigned i = 0; i < s->nb_exec; ++i) {
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 0);
-        // TODO wait with manager
-        //if (pthread_barrier_wait(s->section_barrier) == PTHREAD_BARRIER_SERIAL_THREAD) {
+
         if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
-            // Copy the matrix
-            copy_from_buffer(m);
+            // Swap the matrix and the buffer
+            swapBuffer(m);
         }
 
         wait_barrier();
@@ -123,8 +122,8 @@ void* diffusion_thread(void* args) {
         diffusion_2d_section(s, 4 / 6.f, 1 / 6.f, 1);
 
         if (wait_barrier() == PTHREAD_BARRIER_SERIAL_THREAD) {
-            // Copy the matrix
-            copy_from_buffer(m);
+            // Swap the matrix and the buffer
+            swapBuffer(m);
             set_middle_to_max_temp(m);
         }
         wait_barrier();
@@ -147,6 +146,12 @@ void print_matrix_2d_quarter(matrix_2d * m){
     }
 
     printf("\n-------------\n");
+}
+
+void swapBuffer(matrix_2d* m) {
+    float** temp = m->matrix;
+    m->matrix = m->buffer;
+    m->buffer = temp;
 }
 
 

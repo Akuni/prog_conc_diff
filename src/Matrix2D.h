@@ -34,6 +34,8 @@ void print_matrix_2d(matrix_2d *);
 
 void print_matrix_2d_quarter(matrix_2d *);
 
+void swapBuffer(matrix_2d* m);
+
 int update_matrix(matrix_2d *, int);
 
 void* diffusion_thread(void* args);
