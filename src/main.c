@@ -52,7 +52,11 @@ int main(int argc, char **argv) {
             case 2: // with custom barrier
                 choice = custom_cond;
                 stats = run_thread(&matrix2d, &p, p.array_thread_nb[thread]);
+                break;
             case 3: // with thread mutex
+                choice = custom_semaphore;
+                stats = run_thread(&matrix2d, &p, p.array_thread_nb[thread]);
+                break;
             case 4: // with OpenCL CPU
             case 5: // with OpenCL GPU
             default:

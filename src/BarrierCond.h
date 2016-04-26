@@ -7,7 +7,7 @@
 
 #include <pthread.h>
 
-// VERSION AVEC CONDITIONS
+// Condition variable version
 typedef struct {
     int remain;
     int threadsAwaiting;

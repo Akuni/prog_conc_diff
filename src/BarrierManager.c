@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include "BarrierManager.h"
 #include "BarrierCond.h"
+#include "BarrierSemaphore.h"
 
 
 pthread_barrier_t section_barrier;
 BarrierCond section_barrier_cond;
+BarrierSemaphore barrier_semaphore;
 
 void init_barrier(int nb_thread){
     switch (choice) {
@@ -19,6 +21,7 @@ void init_barrier(int nb_thread){
             barrier_cond_init(&section_barrier_cond, nb_thread);
             break;
         default:
+            barrier_semaphore_init(&barrier_semaphore, nb_thread);
             break;
     }
 }
@@ -32,7 +35,7 @@ int wait_barrier() {
             return barrier_cond_wait(&section_barrier_cond);
             break;
         default:
-            return 0;
+            return barrier_semaphore_wait(&barrier_semaphore);
             break;
     }
 }
@@ -46,6 +49,7 @@ void destroy_barrier() {
             barrier_cond_destroy(&section_barrier_cond);
             break;
         default:
+            barrier_semaphore_destroy(&barrier_semaphore);
             break;
     }
 }
