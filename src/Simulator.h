@@ -1,5 +1,5 @@
 //
-// Created by Nicolas on 20/02/2016.
+// Created by LECOURTOIS Nicolas & SARROCHE Nicolas on 20/02/16.
 //
 
 #include "Matrix2D.h"
@@ -14,9 +14,14 @@ typedef struct {
     double execution_time_user;
 } exec_stats;
 
+// run only one
 exec_stats run_one_iterative(matrix_2d *, int measure_cpu, int measure_usr, int execution_number);
 
 exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats run_one_custom(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats runCustomBarrier(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number);
 
 exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number);
 

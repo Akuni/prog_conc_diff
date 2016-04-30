@@ -1,5 +1,5 @@
 //
-// Created by user on 02/02/16.
+// Created by LECOURTOIS Nicolas & SARROCHE Nicolas on 02/02/16.
 //
 
 #ifndef PROG_CONC_DIFF_MATRIX2D_H

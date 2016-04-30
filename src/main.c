@@ -1,24 +1,10 @@
+//
+// Created by LECOURTOIS Nicolas & SARROCHE Nicolas on 02/02/16.
+//
+
 /*
- * main.c
- * 
- * Copyright 2016 Akuni <user@Axxx>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- * 
- * 
+ * Copyright 2016 Akuni
+ *
  */
 
 
@@ -29,7 +15,7 @@
 #include <sys/resource.h>
 
 #include "Physics.h"
-#include "simulator.h"
+#include "Simulator.h"
 
 struct rusage;
 
@@ -51,9 +37,8 @@ int main(int argc, char **argv) {
     // various flags : flag to display only quarter, flag  to display executing time
     int flag_quarter = 0, flag_execution_time_cpu = 0, flag_execution_time_user = 0;
     // the exercise number
-    int exercise_number = 0;
+    int exercise_number;
 
-    int do_exercise = 1;
     // execution statistics
     exec_stats stats;
     char c;
@@ -144,51 +129,48 @@ int main(int argc, char **argv) {
 
     struct rusage usage;
 
+    // for each exercice asked
     for (int k = 0; k < nb_exercise; k++) {
         exercise_number = array_exercise_number[k];
+        // for each size of matrix asked
         for (int i = 0; i < nb_sizes; ++i) {
+            problem_coeff_size = array_problem_coeff_size[i];
+            // At least exponent of 4
+            // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
+            problem_coeff_size += 4;
+
+            // init the 2D matrix
+            matrix_2d matrix2d;
+            int status = init_matrix_2d(problem_coeff_size, 256, &matrix2d);
+            if (status == -1) {
+                printf("couldn't create the matrix ! \n");
+                return -1;
+            }
+            // for each thread asked
             for (int j = 0; j < nb_array_thread_size; j++) {
                 thread_number = array_thread_numbers[j];
                 getrusage(RUSAGE_SELF, &usage);
-                problem_coeff_size = array_problem_coeff_size[i];
-                // At least exponent of 4
-                problem_coeff_size += 4;
-                // generate problem size 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
 
                 printf("size : %d, thread_number : %d\n", (1 << problem_coeff_size), thread_number);
-                // init the 2D matrix
-                matrix_2d matrix2d;
-                int status = init_matrix_2d(problem_coeff_size, 128, &matrix2d);
-                if (status == -1) {
-                    printf("couldn't create the matrix ! \n");
-                    return -1;
-                }
 
                 // start process of diffusion
                 switch (exercise_number) {
                     case 0:
                         // no thread
-                        if(do_exercise){
-                            //do_exercise=0;
-                            stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
-                        }
-
+                        stats = runIterative(&matrix2d, flag_execution_time_cpu, flag_execution_time_user, execution_number);
                         break;
-                    case 1: // with thread posix
-                        stats = runThreadPosix(&matrix2d, thread_number, flag_execution_time_cpu,
-                                               flag_execution_time_user, execution_number);
+                     case 1: // with thread posix
+                        stats = runThreadPosix(&matrix2d, thread_number, flag_execution_time_cpu, flag_execution_time_user, execution_number);
                         break;
                     case 2: // with thread variable
+                        stats = runCustomBarrier(&matrix2d, thread_number, flag_execution_time_cpu, flag_execution_time_user, execution_number);
+                        break;
                     case 3: // with thread mutex
                     case 4: // with OpenCL CPU
                     case 5: // with OpenCL GPU
                     default:
-                        do_exercise = 0;
                         printf("Exercise %d is not yet implemented. \n", execution_number);
                         break;
-                }
-                if(!do_exercise){
-                    break;
                 }
 
                 // if -m, display time
@@ -206,16 +188,19 @@ int main(int argc, char **argv) {
                 getrusage(RUSAGE_SELF, &usage);
                 printf("Memory usage : %ld\n", usage.ru_maxrss);
                 printf("---------------------------\n");
-                free_matrix(&matrix2d);
+
                 // Todo skip exercice
-                if(exercise_number == 0){
-                    i = nb_sizes;
+                if(!exercise_number){
                     break;
                 }
             }
+            // free the matrix
+            free_matrix(&matrix2d);
         }
     }
 
     free(array_problem_coeff_size);
+    free(array_exercise_number);
+    free(array_thread_numbers);
 }
 

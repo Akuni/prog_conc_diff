@@ -1,5 +1,5 @@
 //
-// Created by user on 25/02/16.
+// Created by SARROCHE Nicolas on 25/02/16.
 //
 
 #include <malloc.h>
@@ -8,7 +8,8 @@
 #include "Thread.h"
 #include "Physics.h"
 
-pthread_barrier_t   barrier_a,  barrier_b;
+pthread_barrier_t   barrier_a;
+Barrier_impl * barrier_impl;
 
 void main_posix_thread(void * data){
     matrix_chunk * chunk = (matrix_chunk *) data;
@@ -21,7 +22,7 @@ void main_posix_thread(void * data){
         // algo from left to right
         update_section(chunk, 1);
         // wait all thread
-        pthread_barrier_wait(&barrier_b);
+        pthread_barrier_wait(&barrier_a);
         // swap pointers
         swap_matrix(chunk);
         // wait all thread
@@ -29,7 +30,7 @@ void main_posix_thread(void * data){
         // algo from top to bottom
         update_section(chunk, 0);
         // wait all thread
-        pthread_barrier_wait(&barrier_b);
+        pthread_barrier_wait(&barrier_a);
         // swap pointers
         swap_matrix(chunk);
         // update center
@@ -41,6 +42,35 @@ void main_posix_thread(void * data){
     free(chunk);
 }
 
+void main_custom_thread(void * data){
+    matrix_chunk * chunk = (matrix_chunk *) data;
+
+
+    // wait all thread
+    wait(barrier_impl);
+    for(int i = 0; i < chunk->exec_number; i++){
+        // algo from left to right
+        update_section(chunk, 1);
+        // wait all thread
+        wait(barrier_impl);
+        // swap pointers
+        swap_matrix(chunk);
+        // wait all thread
+        wait(barrier_impl);
+        // algo from top to bottom
+        update_section(chunk, 0);
+        // wait all thread
+        wait(barrier_impl);
+        // swap pointers
+        swap_matrix(chunk);
+        // update center
+        set_middle_to_max_temp(chunk->matrix2d);
+        // wait all thread
+        wait(barrier_impl);
+    }
+    // fin
+    free(chunk);
+}
 
 matrix_chunk * init_chunk(matrix_chunk * m , int size, int number, int total_thread, int exec,matrix_2d* matrix2d){
     m->size = size;
@@ -57,21 +87,7 @@ int update_section(matrix_chunk * m, int sens){
     return EXIT_SUCCESS;
 }
 
-/*
-void copy_buffer(matrix_chunk * m){
-    *//*if(m->idY || m->idX){
-        return;
-    }*//*
-    int i,j;
-    for(i = 0; i < m->size; i++) {
-        for (j = 0; j < m->size; ++j) {
-            *//*m->matrix2d->matrix[i][j] = m->matrix2d->buffer[i][j];
-            m->matrix2d->buffer[i][j] = 0 ;*//*
-            m->matrix2d->matrix[m->size*m->idX+i][m->size*m->idY+j] = m->matrix2d->buffer[m->size*m->idX+i][m->size*m->idY+j];
-            m->matrix2d->buffer[m->size*m->idX+i][m->size*m->idY+j] = 0 ;
-        }
-    }
-}*/
+
 
 void swap_matrix(matrix_chunk * m){
     if(m->idY || m->idX)

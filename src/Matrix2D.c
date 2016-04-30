@@ -1,10 +1,9 @@
 //
-// Created by user on 02/02/16.
+// Created by LECOURTOIS Nicolas & SARROCHE Nicolas on 02/02/16.
 //
 
 #include <stdio.h>
 #include <malloc.h>
-#include <string.h>
 
 #include "Matrix2D.h"
 #include "Physics.h"

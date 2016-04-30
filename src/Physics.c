@@ -1,39 +1,11 @@
 //
-// Created by user on 02/02/16.
+// Created by LECOURTOIS Nicolas & SARROCHE Nicolas on 02/02/16.
 //
 
 #include "Physics.h"
 
 
-float calculus(matrix_representation *m, int i, float coeff1, float coeff2);
-
 float calculus_2d(matrix_2d *m, int i, int j, float coeff1, float coeff2, int sens);
-
-int diffusion(matrix_representation * m, float coeff1, float coeff2){
-    matrix_representation result;
-    init_matrix(m->size, m->middle_index, &result);
-
-    // run through matrix
-    int i;
-    for(i = 0; i < m->size; i++){
-        result.matrix[i] = calculus(m, i, coeff1, coeff2);
-    }
-
-    // copy results
-    for(i = 0; i < m->size; i++){
-        m->matrix[i] = result.matrix[i];
-    }
-
-    return 0;
-}
-
-float calculus(matrix_representation *m, int i, float coeff1, float coeff2){
-    int ipp = i+1;
-    int imm = i-1;
-    float left = 0 <= imm && imm < m->size ? m->matrix[imm] : 0;
-    float right = 0 <= ipp && ipp < m->size ? m->matrix[ipp] : 0;
-    return  m->matrix[i] * coeff1 + coeff2 *(left + right);
-}
 
 int diffusion_2d(matrix_2d * m, float coeff1, float coeff2, int sens){
 
@@ -80,6 +52,9 @@ int diffusion_2d_chunk(matrix_chunk * m, float coeff1, float coeff2, int sens){
     int i,j;
     for(i = 0; i < m->size; i++){
         for(j = 0; j < m->size; j++){
+            // Todo check optimization condition
+            /*if(!m->matrix2d->matrix[m->size*m->idX + i ][m->matrix2d->middle_index])
+                continue;*/
             m->matrix2d->buffer[m->size*m->idX+i][m->size*m->idY+j] = calculus_2d(m->matrix2d, m->size*m->idX+i, m->size*m->idY+j, coeff1, coeff2, sens);
         }
     }
