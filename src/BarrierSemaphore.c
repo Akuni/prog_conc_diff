@@ -17,7 +17,6 @@ void barrier_semaphore_init(BarrierSemaphore *barrier, int counter) {
 
 int barrier_semaphore_wait(BarrierSemaphore *barrier) {
     int returnValue = 0;
-    //printf("using the right barrier\n");
     sem_wait(&barrier->mutex);
     ++barrier->nb_att;
     if (barrier->nb_att == barrier->N) {

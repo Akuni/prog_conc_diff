@@ -1,8 +1,8 @@
 GCC = gcc -Wall -std=gnu99 -pthread
 SRC = -l src
 
-prog: bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o bin bin/BarrierManager.o bin/BarrierCond.o
-	$(GCC)  bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o bin/BarrierManager.o bin/BarrierCond.o -o bin/prog
+prog: bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o bin bin/BarrierManager.o bin/BarrierCond.o bin/BarrierSemaphore.o
+	$(GCC)  bin/main.o bin/Matrix2D.o bin/Physics.o bin/simulator.o bin/BarrierManager.o bin/BarrierCond.o bin/BarrierSemaphore.o -o bin/prog
 
 bin/main.o: src/main.c
 	$(GCC) -c src/main.c -o bin/main.o $(SRC)
@@ -21,3 +21,6 @@ bin/BarrierManager.o: src/BarrierManager.c src/BarrierManager.h
 
 bin/BarrierCond.o: src/BarrierCond.c src/BarrierCond.h
 	$(GCC) -c src/BarrierCond.c -o bin/BarrierCond.o $(SRC)
+
+bin/BarrierSemaphore.o: src/BarrierSemaphore.c src/BarrierSemaphore.h
+	$(GCC) -c src/BarrierSemaphore.c -o bin/BarrierSemaphore.o $(SRC)
