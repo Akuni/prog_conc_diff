@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include "Matrix2D.h"
 #include "Barrier.h"
+#include "Semaphore.h"
 
 typedef struct {
     int size;
@@ -19,9 +20,11 @@ typedef struct {
 
 extern pthread_barrier_t barrier_a; //,  barrier_b;
 extern Barrier_impl * barrier_impl;
+extern Semaphore_impl * semaphore_impl;
 
 void main_posix_thread(void * data);
 void main_custom_thread(void * data);
+void main_semaphore_thread(void * data);
 
 matrix_chunk * init_chunk(matrix_chunk * m, int size, int number, int total_thread, int exec, matrix_2d* matrix2d);
 

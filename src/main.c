@@ -166,6 +166,8 @@ int main(int argc, char **argv) {
                         stats = runCustomBarrier(&matrix2d, thread_number, flag_execution_time_cpu, flag_execution_time_user, execution_number);
                         break;
                     case 3: // with thread mutex
+                        stats = runSemaphore(&matrix2d, thread_number, flag_execution_time_cpu, flag_execution_time_user, execution_number);
+                        break;
                     case 4: // with OpenCL CPU
                     case 5: // with OpenCL GPU
                     default:

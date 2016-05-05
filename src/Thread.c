@@ -5,11 +5,13 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include "Semaphore.h"
 #include "Thread.h"
 #include "Physics.h"
 
 pthread_barrier_t   barrier_a;
 Barrier_impl * barrier_impl;
+Semaphore_impl * semaphore_impl;
 
 void main_posix_thread(void * data){
     matrix_chunk * chunk = (matrix_chunk *) data;
@@ -67,6 +69,36 @@ void main_custom_thread(void * data){
         set_middle_to_max_temp(chunk->matrix2d);
         // wait all thread
         wait(barrier_impl);
+    }
+    // fin
+    free(chunk);
+}
+
+void main_semaphore_thread(void * data){
+    matrix_chunk * chunk = (matrix_chunk *) data;
+
+
+    // wait all thread
+    wait_on_sem(semaphore_impl);
+    for(int i = 0; i < chunk->exec_number; i++){
+        // algo from left to right
+        update_section(chunk, 1);
+        // wait all thread
+        wait_on_sem(semaphore_impl);
+        // swap pointers
+        swap_matrix(chunk);
+        // wait all thread
+        wait_on_sem(semaphore_impl);
+        // algo from top to bottom
+        update_section(chunk, 0);
+        // wait all thread
+        wait_on_sem(semaphore_impl);
+        // swap pointers
+        swap_matrix(chunk);
+        // update center
+        set_middle_to_max_temp(chunk->matrix2d);
+        // wait all thread
+        wait_on_sem(semaphore_impl);
     }
     // fin
     free(chunk);

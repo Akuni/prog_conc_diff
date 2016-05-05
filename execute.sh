@@ -1,4 +1,4 @@
 #!/bin/bash
 
 make
-bin/prog -i 10000 -e 0 -s 024 -t 13 -m
+bin/prog -i 10000 -e 0123 -s 024 -t 024 -m -M

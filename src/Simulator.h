@@ -21,6 +21,10 @@ exec_stats run_one_posix(matrix_2d *matrix2d, int thread_number, int measure_cpu
 
 exec_stats run_one_custom(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number);
 
+exec_stats run_one_semaphore(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number);
+
+exec_stats runSemaphore(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number);
+
 exec_stats runCustomBarrier(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number);
 
 exec_stats runIterative(matrix_2d *matrix2d, int measure_cpu, int measure_usr, int execution_number);

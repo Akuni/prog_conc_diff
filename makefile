@@ -8,8 +8,8 @@ dir :
 	@echo "Creating bin folder ..."
 	-@mkdir -p bin/
 	@echo "Folder created"
-prog: bin/main.o bin/Barrier.o bin/Matrix2D.o bin/Physics.o bin/Simulator.o bin/Thread.o
-	$(GCC)  bin/main.o bin/Barrier.o bin/Matrix2D.o bin/Physics.o bin/Simulator.o  bin/Thread.o  -o bin/prog -lm -lpthread
+prog: bin/main.o bin/Barrier.o bin/Matrix2D.o bin/Physics.o bin/Simulator.o bin/Thread.o bin/Semaphore.o
+	$(GCC)  bin/main.o bin/Barrier.o bin/Matrix2D.o bin/Physics.o bin/Simulator.o bin/Semaphore.o bin/Thread.o  -o bin/prog -lm -lpthread
 	@echo "Compilation done !"
 
 bin/main.o: src/main.c
@@ -30,6 +30,9 @@ bin/Simulator.o: src/Simulator.c src/Simulator.h
 
 bin/Thread.o: src/Thread.c src/Thread.h
 	$(GCC) -c src/Thread.c -o bin/Thread.o $(SRC)
+
+bin/Semaphore.o: src/Semaphore.c src/Semaphore.h
+	$(GCC) -c src/Semaphore.c -o bin/Semaphore.o $(SRC)
 
 clean:
 	@echo "Removing files ..."

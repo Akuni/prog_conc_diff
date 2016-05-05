@@ -11,9 +11,11 @@
 #include "Matrix2D.h"
 #include "Simulator.h"
 #include "Thread.h"
+#include "Semaphore.h"
 
 pthread_barrier_t   barrier_a;
 Barrier_impl * barrier_impl;
+Semaphore_impl * semaphore_impl;
 
 exec_stats compute_average(exec_stats stats_array[10], int array_length);
 
@@ -286,6 +288,109 @@ exec_stats run_one_custom(matrix_2d *matrix2d, int thread_number, int measure_cp
             break;
         }
     }
+
+    // join threads
+    void * retvals[thread_total];
+    for (int i = 0; i < thread_total; ++i) {
+        if (pthread_join(array[i], &retvals[i]) != 0) {
+            fprintf(stderr, "error: Cannot join thread # %d\n", i);
+        }
+    }
+
+    // if -m, stop the chrono
+    if (measure_cpu) {
+        stats.execution_time_cpu = (double) (clock() - clockBegin) / CLOCKS_PER_SEC;
+    }
+    if (measure_usr) {
+        stats.execution_time_user = time(NULL) - timeBegin;
+    }
+    return stats;
+}
+
+
+exec_stats runSemaphore(matrix_2d * matrix2d, int number, int cpu, int user, int execution_number) {
+    exec_stats stats_array[NB_ITERATION];
+    int flag_must_make_average = cpu || user;
+    int nb_iteration = flag_must_make_average ? NB_ITERATION : 1;
+
+    printf("Custom Semaphore : \n");
+    for (unsigned i = 0; i < nb_iteration; ++i) {
+        reset_matrix(matrix2d);
+        reset_buffer(matrix2d);
+        stats_array[i] = run_one_semaphore(matrix2d, number, cpu, user, execution_number);
+        //printf("%d iteration -> %.4fs(cpu), %.4fs (user)\n", (i+1), stats_array[i].execution_time_cpu, stats_array[i].execution_time_user);
+    }
+    exec_stats stats = compute_average(stats_array, nb_iteration);
+    destroy_semaphore(semaphore_impl);
+    return stats;
+}
+
+
+exec_stats run_one_semaphore(matrix_2d *matrix2d, int thread_number, int measure_cpu, int measure_usr, int execution_number) {
+
+    exec_stats stats;
+    init_stats(&stats);
+    // if -m, start chrono
+    clock_t clockBegin = 0;
+    time_t timeBegin = 0;
+    if (measure_cpu) {
+        clockBegin = clock();
+    }
+    if (measure_usr) {
+        timeBegin = time(NULL);
+    }
+
+    // reset buffer
+    reset_buffer(matrix2d);
+
+    // total thread number
+    unsigned thread_total = (unsigned) 1 << (thread_number);
+    // number of thread per "line"
+    int thread_by_line = (int) sqrtl((long)thread_total);
+    // block size of a thread
+    int size = matrix2d->size / thread_by_line;
+
+    if(!size){
+        fprintf(stderr, "error: With %d threads, the size is %d, which is impossible ! \n", thread_total, size );
+        return stats;
+        //exit(0);
+    }
+
+
+    // init barriers
+    semaphore_impl = init_semaphore(thread_total);
+
+    // init thread chunks
+    matrix_chunk ** array_chunk = (matrix_chunk**) malloc(sizeof(matrix_chunk)* thread_total);
+    if(array_chunk == NULL){
+        fprintf(stderr, "error: Cannot allocate chunk array !\n");
+        exit(0);
+    }
+
+    for(int i = 0; i < thread_total ;  i++){
+        array_chunk[i] = malloc(sizeof(matrix_chunk));
+        if(array_chunk[i] == NULL){
+            fprintf(stderr, "error: Cannot create chunk # %d\n", i);
+            exit(0);
+        }
+        array_chunk[i] = init_chunk(array_chunk[i], size, i, thread_by_line, execution_number, matrix2d);
+    }
+
+
+    // init threads
+    pthread_t  array[thread_total];
+    for(int i = 0; i < thread_total; i++){
+        if(array_chunk[i] == NULL){
+            fprintf(stderr, "error: Cannot create chunk # %d\n", i);
+            exit(0);
+        }
+
+        if (pthread_create(&array[i], NULL, (void*) main_semaphore_thread, array_chunk[i]) != 0) {
+            fprintf(stderr, "error: Cannot create custom thread # %d\n", i);
+            break;
+        }
+    }
+
 
     // join threads
     void * retvals[thread_total];

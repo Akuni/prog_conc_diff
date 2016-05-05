@@ -11,13 +11,14 @@
 
 typedef struct {
     int counter, max_thread;
-    sem_t attente_t;
-    sem_t mutex_t;
+    sem_t attente_t, mutex_t;
 } Semaphore_impl;
 
 
 Semaphore_impl * init_semaphore(unsigned int valeur);
 
-int wait_on_sem(sem_t sem);
+void wait_on_sem(Semaphore_impl * sem);
+
+void destroy_semaphore(Semaphore_impl * semaphore_impl);
 
 #endif //PROG_CONC_DIFF_SEMAPHORE_H
